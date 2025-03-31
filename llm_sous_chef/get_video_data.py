@@ -1,41 +1,43 @@
 import json
-
+import os
 import yt_dlp
 import subprocess
 import uuid
+import tempfile
 
 from llm_sous_chef.speech_to_text import get_transcription
 
 
 def download_video(url: str):
-    temp_output_filename = str(uuid.uuid4()) # Temp name for output file
-    ydl_opts = {
-        "outtmpl": temp_output_filename + ".mp4",
-        "format": "bestvideo+bestaudio/best",  # get best available quality
-        "writeinfojson": True,
-        "quiet": False,  # set to True to suppress output
-    }
+    # Init temp directory and name for output file
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # temp_output_filename = str(uuid.uuid4())
+        temp_output_filename = os.path.join(temp_dir, str(uuid.uuid4()))
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+        ydl_opts = {
+            "outtmpl": temp_output_filename + ".mp4",
+            "format": "bestvideo+bestaudio/best",
+            "writeinfojson": True,
+            "quiet": False,
+        }
 
-    with open(temp_output_filename + ".info.json", "rb") as file:
-        data = json.load(file)
-        # print(data["title"])
-        # print(data["description"])
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
 
-    # Get audio form of video
-    extract_audio(temp_output_filename)
+        with open(temp_output_filename + ".info.json", "rb") as file:
+            data = json.load(file)
 
-    # Get transcription of video
-    transcription = get_transcription(temp_output_filename)
+        # Get audio form of video
+        extract_audio(temp_output_filename)
+        # Get transcription of video
+        transcription = get_transcription(temp_output_filename)
 
-    return {
-        "uuid": temp_output_filename,
-        "title": data["title"],
-        "description": data["description"],
-        "transcription": transcription
-    }
+        return {
+            "uuid": temp_output_filename,
+            "title": data["title"],
+            "description": data["description"],
+            "transcription": transcription
+        }
 
 
 def extract_audio(temp_filename):
@@ -46,4 +48,5 @@ def extract_audio(temp_filename):
         "-ac", "1",         # mono,
         "-c:a", "flac",
         temp_filename + ".flac"
-    ])
+    ], check=True)
+
