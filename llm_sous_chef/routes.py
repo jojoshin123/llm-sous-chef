@@ -1,4 +1,6 @@
 from flask import Blueprint, request, jsonify
+
+from llm_sous_chef.auth import require_auth
 from llm_sous_chef.get_video_data import download_video
 from llm_sous_chef.get_recipe import get_recipe
 from llm_sous_chef.service.user_service import get_users, add_users, login
@@ -34,3 +36,8 @@ def login_endpoint():
     result = login(user, pwd)
 
     return str(result)
+
+@main.route("/protected", methods=["POST"])
+@require_auth
+def protected_endpoint():
+    return "chicken"
