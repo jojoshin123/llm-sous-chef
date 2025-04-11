@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from llm_sous_chef.get_video_data import download_video
 from llm_sous_chef.get_recipe import get_recipe
-from llm_sous_chef.db.create import get_users, add_users
+from llm_sous_chef.service.user_service import get_users, add_users, login
 
 main = Blueprint("main", __name__)
 
@@ -17,7 +17,7 @@ def get_users_endpoint():
     return get_users()
 
 @main.route("/signup", methods=["POST"])
-def add_user_endpoint():
+def signup_endpoint():
     user_id = add_users(request.headers.get("username"),
                      request.headers.get("email"),
                      request.headers.get("password"))
@@ -26,7 +26,11 @@ def add_user_endpoint():
     else:
         return jsonify({"error": "User already exists" }), 409
 
-# @main.route("/login", methods=["POST"])
-# def add_user_endpoint():
-#     return login(request.headers.get("username"),
-#                      request.headers.get("password"))
+@main.route("/login", methods=["POST"])
+def login_endpoint():
+    # Get username or email
+    user = request.headers.get("username") if request.headers.get("username") else request.headers.get("email")
+    pwd = request.headers.get("password")
+    result = login(user, pwd)
+
+    return str(result)
