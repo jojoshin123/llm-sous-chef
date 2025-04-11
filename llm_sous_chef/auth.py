@@ -33,3 +33,4 @@ def require_auth(func):
         # Attach user payload to request object
         request.user = user_payload
         return func(*args, **kwargs)
+    return wrapper
