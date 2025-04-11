@@ -11,7 +11,6 @@ from llm_sous_chef.speech_to_text import get_transcription
 def download_video(url: str):
     # Init temp directory and name for output file
     with tempfile.TemporaryDirectory() as temp_dir:
-        # temp_output_filename = str(uuid.uuid4())
         temp_output_filename = os.path.join(temp_dir, str(uuid.uuid4()))
 
         ydl_opts = {
