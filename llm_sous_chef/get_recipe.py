@@ -29,7 +29,6 @@ def get_recipe(video_data):
                     "instructions": [],
                     "title": ""
                 }
-                
                 """ + str(video_data),
             }
         ],
