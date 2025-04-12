@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, request, jsonify
 
 from llm_sous_chef.auth import require_auth
@@ -8,11 +10,12 @@ from llm_sous_chef.service.user_service import get_users, add_users, login
 main = Blueprint("main", __name__)
 
 @main.route("/transcribe")
+@require_auth
 def index():
     url = request.headers.get("url")
     data = download_video(url)
     response = get_recipe(data)
-    return response
+    return json.loads(response)
 
 @main.route("/get-users")
 def get_users_endpoint():
@@ -36,8 +39,3 @@ def login_endpoint():
     result = login(user, pwd)
 
     return str(result)
-
-@main.route("/protected", methods=["POST"])
-@require_auth
-def protected_endpoint():
-    return "chicken"
