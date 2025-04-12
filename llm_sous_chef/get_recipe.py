@@ -23,7 +23,9 @@ def get_recipe(video_data):
                     "description": "",
                     "ingredients": [
                         {
-                            "ingredient": "" (This should contain both the ingredient quantity and name.)
+                            "ingredient": "" (This should contain both the ingredient QUANTITY and NAME.
+                            If quantity is not mentioned in the video metadata, then please generate your own quantities
+                            based on similar recipes.)
                         }
                     ],
                     "instructions": [],

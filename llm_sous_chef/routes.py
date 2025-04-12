@@ -3,9 +3,8 @@ import json
 from flask import Blueprint, request, jsonify
 
 from llm_sous_chef.auth import require_auth
-from llm_sous_chef.get_video_data import download_video
-from llm_sous_chef.get_recipe import get_recipe
 from llm_sous_chef.service.user_service import get_users, add_users, login
+from llm_sous_chef.service.recipe_service import generate_recipe
 
 main = Blueprint("main", __name__)
 
@@ -13,8 +12,7 @@ main = Blueprint("main", __name__)
 @require_auth
 def index():
     url = request.headers.get("url")
-    data = download_video(url)
-    response = get_recipe(data)
+    response = generate_recipe(url)
     return json.loads(response)
 
 @main.route("/get-users")

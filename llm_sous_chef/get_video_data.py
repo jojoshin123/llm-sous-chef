@@ -48,4 +48,3 @@ def extract_audio(temp_filename):
         "-c:a", "flac",
         temp_filename + ".flac"
     ], check=True)
-
