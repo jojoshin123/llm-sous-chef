@@ -28,6 +28,7 @@ def get_recipe(video_data):
             }
         ],
         model="llama-3.3-70b-versatile", # Required model to use for transcription
+        response_format={ "type": "json_object" }
     )
 
     return chat_completion.choices[0].message.content
