@@ -5,7 +5,7 @@ import subprocess
 import uuid
 import tempfile
 
-from llm_sous_chef.speech_to_text import get_transcription
+from llm_sous_chef.service.recipe_utils.speech_to_text import get_transcription
 
 
 def download_video(url: str):
