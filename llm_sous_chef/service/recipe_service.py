@@ -30,14 +30,4 @@ def check_for_url(text: str):
             response = requests.get(cleaned_url)
             soup = BeautifulSoup(response.text, "html.parser")
             text = soup.get_text()
-            print(text)
             return text
-
-        # TODO: Visit website and pull recipe down
-
-        # soup = BeautifulSoup(response.text, "html.parser")
-    # return match
-
-# print("\n\n\nURL check:")
-# print(check_for_url(data["description"]))
-# print("\n\n\n")
