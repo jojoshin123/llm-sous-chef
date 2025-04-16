@@ -21,13 +21,9 @@ def get_recipe(video_data):
                 I want you to return this recipe as a JSON object in the format specified below.
                 {
                     "description": "",
-                    "ingredients": [
-                        {
-                            "ingredient": "" (This should contain both the ingredient QUANTITY and NAME.
+                    "ingredients": [""] (These should contain both the ingredient QUANTITY and NAME.
                             If quantity is not mentioned in the video metadata, then please generate your own quantities
                             based on similar recipes.)
-                        }
-                    ],
                     "instructions": [],
                     "title": ""
                 }
