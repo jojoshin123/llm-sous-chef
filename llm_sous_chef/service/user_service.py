@@ -28,7 +28,7 @@ def add_users(username: str, email: str, raw_password: str):
         conn.rollback()
         return None
 
-def login(user: str, raw_password: str) -> bool:
+def login(user: str, raw_password: str) -> str | None:
     with conn.cursor() as cur:
         cur.execute("""
             SELECT hashed_pwd FROM users

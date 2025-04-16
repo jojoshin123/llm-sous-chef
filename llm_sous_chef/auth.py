@@ -7,7 +7,7 @@ from flask import request, jsonify
 EXPIRATION_MINUTES = 120
 SECRET_KEY = os.getenv("JWT_SECRET")
 
-def create_jwt(data: dict):
+def create_jwt(data: dict) -> str:
     data_copy = data.copy() # To add "expire" field for jwt
     data_copy["exp"] = datetime.utcnow() + timedelta(minutes=EXPIRATION_MINUTES)
 

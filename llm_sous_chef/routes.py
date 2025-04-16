@@ -35,5 +35,8 @@ def login_endpoint():
     user = request.headers.get("username") if request.headers.get("username") else request.headers.get("email")
     pwd = request.headers.get("password")
     result = login(user, pwd)
+    if result:
+        return jsonify({"token": str(result)}), 200
+    else:
+        return jsonify({"error": "Unauthorized"}), 401
 
-    return str(result)
