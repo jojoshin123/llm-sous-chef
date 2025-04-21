@@ -37,12 +37,6 @@ def login_endpoint():
 
 ### Recipe endpoints
 
-@main.route("/recipes/create-cookbook", methods=["POST"])
-@require_auth
-def add_user_cookbook_endpoint():
-
-    return None
-
 @main.route("/recipes/process")
 @require_auth
 def index():
@@ -50,7 +44,15 @@ def index():
     response = generate_recipe(url)
     return json.loads(response)
 
-@main.route("/recipes/get", methods=["GET"])
+
+@main.route("/recipes/create-cookbook", methods=["POST"])
+@require_auth
+def add_user_cookbook_endpoint():
+
+    return None
+
+
+@main.route("/recipes/get-cookbook", methods=["GET"])
 @require_auth
 def get_user_recipes_endpoint():
 
