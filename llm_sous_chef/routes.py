@@ -37,6 +37,12 @@ def login_endpoint():
 
 ### Recipe endpoints
 
+@main.route("/recipes/create-cookbook", methods=["POST"])
+@require_auth
+def add_user_cookbook_endpoint():
+
+    return None
+
 @main.route("/recipes/process")
 @require_auth
 def index():
