@@ -9,17 +9,17 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS recipes (
     id TEXT PRIMARY KEY, -- primary key will be URL?
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    space_id INTEGER REFERENCES spaces(id) ON DELETE SET NULL
+    cookbook_id INTEGER REFERENCES cookbooks(id) ON DELETE SET NULL
 );
 
-CREATE TABLE IF NOT EXISTS spaces (
+CREATE TABLE IF NOT EXISTS cookbooks (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS space_user_map (
-    PRIMARY KEY (user_id, space_id),
+CREATE TABLE IF NOT EXISTS cookbook_user_map (
+    PRIMARY KEY (user_id, cookbook_id),
     user_id INTEGER NOT NULL REFERENCES users(id),
-    space_id INTEGER NOT NULL REFERENCES spaces(id)
+    cookbook_id INTEGER NOT NULL REFERENCES cookbooks(id)
 );
