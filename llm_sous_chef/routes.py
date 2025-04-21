@@ -8,12 +8,7 @@ from llm_sous_chef.service.recipe_service import generate_recipe
 
 main = Blueprint("main", __name__)
 
-@main.route("/transcribe")
-@require_auth
-def index():
-    url = request.headers.get("url")
-    response = generate_recipe(url)
-    return json.loads(response)
+### User endpoints
 
 @main.route("/get-users")
 def get_users_endpoint():
@@ -40,3 +35,24 @@ def login_endpoint():
     else:
         return jsonify({"error": "Unauthorized"}), 401
 
+### Recipe endpoints
+
+@main.route("/recipes/process")
+@require_auth
+def index():
+    url = request.headers.get("url")
+    response = generate_recipe(url)
+    return json.loads(response)
+
+@main.route("/recipes/get", methods=["GET"])
+@require_auth
+def get_user_recipes_endpoint():
+
+    return None
+
+
+@main.route("/recipes/add", methods=["POST"])
+@require_auth
+def add_user_recipe_endpoint():
+
+    return None
