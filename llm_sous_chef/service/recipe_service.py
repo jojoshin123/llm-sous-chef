@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 
 from llm_sous_chef.service.recipe_utils.get_video_data import download_video
 from llm_sous_chef.service.recipe_utils.get_recipe import get_recipe
+from llm_sous_chef.db.db import conn
 
 
 def generate_recipe(url: str):
@@ -31,3 +32,26 @@ def check_for_url(text: str):
             soup = BeautifulSoup(response.text, "html.parser")
             text = soup.get_text()
             return text
+
+def create_cookbook(user_id: str, cookbook_name: str) -> str:
+    with conn.cursor() as cur:
+        try:
+            cur.execute("""
+                        INSERT INTO cookbooks (name)
+                        VALUES (%s)
+                        RETURNING id""",
+                    (cookbook_name,)
+            )
+            cookbook_id = cur.fetchone()[0]
+            cur.execute("""
+                        INSERT INTO cookbook_user_map (user_id, cookbook_id)
+                        VALUES (%s, %s)
+                        RETURNING cookbook_id""",
+                (user_id, cookbook_id)
+            )
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            print("Error creating cookbook:", e)
+            cookbook_id = None
+        return cookbook_id
