@@ -23,3 +23,5 @@ CREATE TABLE IF NOT EXISTS cookbook_user_map (
     user_id INTEGER NOT NULL REFERENCES users(id),
     cookbook_id INTEGER NOT NULL REFERENCES cookbooks(id)
 );
+
+--GRANT USAGE, SELECT ON SEQUENCE cookbook_id_seq, users_id_seq TO <username>;

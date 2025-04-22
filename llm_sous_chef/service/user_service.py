@@ -31,13 +31,14 @@ def add_users(username: str, email: str, raw_password: str):
 def login(user: str, raw_password: str) -> str | None:
     with conn.cursor() as cur:
         cur.execute("""
-            SELECT hashed_pwd FROM users
+            SELECT id,hashed_pwd FROM users
             WHERE username = %s OR email = %s
             LIMIT 1
         """, (user, user))
-        user_hashed_pwd = cur.fetchone()[0]
+        row = cur.fetchone()
+        user_id, user_hashed_pwd = row[0],row[1]
         if verify_hash(raw_password, user_hashed_pwd):
-            return create_jwt({"user": user})
+            return create_jwt({"user_id": user_id})
 
 # _________ bcrypt helpers _________
 

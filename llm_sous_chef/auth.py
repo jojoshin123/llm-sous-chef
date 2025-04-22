@@ -13,8 +13,6 @@ def create_jwt(data: dict) -> str:
 
     return jwt.encode(data_copy, SECRET_KEY, algorithm="HS256")
 
-# TODO: create @require_auth annotation for protected endpoints
-
 def require_auth(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -34,3 +32,6 @@ def require_auth(func):
         request.user = user_payload
         return func(*args, **kwargs)
     return wrapper
+
+# User payload looks like:
+# {'user_id': 69, 'exp': 1745286354}
