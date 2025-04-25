@@ -1,5 +1,7 @@
 import json
 import re
+
+import psycopg
 import requests
 from bs4 import BeautifulSoup
 
@@ -58,16 +60,9 @@ def create_cookbook(user_id: str, cookbook_name: str) -> str:
         return cookbook_id
 
 def add_recipe_to_cookbook(user_id: str, cookbook_name: str, recipe: dict) -> str:
-# TODO: Do I need to check if there is a user->cookbook mapping?
-# TODO: See if recipe is in table already?
+    # TODO: Do I need to check if there is a user->cookbook mapping?
     with conn.cursor() as cur:
-        cur.execute("""
-                        SELECT id FROM cookbooks
-                        WHERE name=%s
-                        """,
-                    (cookbook_name,)
-            )
-        cookbook_id = cur.fetchone()[0]
+        cookbook_id = get_cookbook_id(cur, cookbook_name)
         recipe_bytes = json.dumps(recipe).encode('utf-8')
         try:
             cur.execute("""
@@ -85,16 +80,36 @@ def add_recipe_to_cookbook(user_id: str, cookbook_name: str, recipe: dict) -> st
         return recipe_id
 
 # Returns all recipes in cookbook
-# def get_cookbook(user_id: str, cookbook_name: str) -> str:
-#     with conn.cursor() as cur:
-#         try:
-#             cur.execute("""
-#                         SELECT name from (name)
-#                         VALUES (%s)
-#                         RETURNING id""",
-#                     (cookbook_name,)
-#             )
-#             cookbook_id = cur.fetchone()[0]
-#             conn.commit()
-#         except Exception as e:
+def get_cookbook(cookbook_name: str) -> list[dict]:
+    # TODO: Do I need to check if there is a user->cookbook mapping?
+    with conn.cursor() as cur:
+        try:
+            cookbook_id = get_cookbook_id(cur, cookbook_name)
+            print(f'\n\n\n{cookbook_id}\n\n\n')
+            cur.execute("""
+                            SELECT recipe from recipes
+                            WHERE cookbook_id=%s
+                            """,
+            (cookbook_id,)
+            )
+            recipe_tuples = cur.fetchall()
+            recipes = [tup[0].decode('utf-8') for tup in recipe_tuples]
 
+            return recipes
+        except Exception as e:
+            print("Error fetching cookbook:", e)
+            recipes = []
+        return recipes
+
+
+# Helper functions
+
+def get_cookbook_id(cur: psycopg.Cursor, cookbook_name: str) -> str:
+    cur.execute("""
+                            SELECT id from cookbooks
+                            WHERE name=%s
+                            """,
+                (cookbook_name,)
+                )
+    cookbook_id = cur.fetchone()[0]
+    return cookbook_id

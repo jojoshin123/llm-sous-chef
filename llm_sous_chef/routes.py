@@ -4,7 +4,7 @@ from flask import Blueprint, request, jsonify
 
 from llm_sous_chef.auth import require_auth
 from llm_sous_chef.service.user_service import get_users, add_users, login
-from llm_sous_chef.service.recipe_service import generate_recipe, create_cookbook, add_recipe_to_cookbook
+from llm_sous_chef.service.recipe_service import generate_recipe, create_cookbook, add_recipe_to_cookbook, get_cookbook
 
 main = Blueprint("main", __name__)
 
@@ -68,11 +68,17 @@ def add_user_cookbook_endpoint():
         return jsonify({"error": "Error creating cookbook"}), 500
 
 
-@main.route("/recipes/get-cookbook", methods=["GET"])
+@main.route("/recipes/get-recipes-in-cookbook", methods=["GET"])
 @require_auth
 def get_user_cookbook_endpoint():
-
-    return None
+    cookbook_name = request.headers.get("cookbook-name")
+    recipes = get_cookbook(cookbook_name)
+    if recipes:
+        return jsonify({"recipes": recipes}), 200
+    elif len(recipes) == 0:
+        return jsonify({"error": f"No Recipes found in cookbook {cookbook_name}"}), 200
+    else:
+        return jsonify({"error": "Error fetching recipes in cookbook"}), 500
 
 
 @main.route("/recipes/add", methods=["POST"])
