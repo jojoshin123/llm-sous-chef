@@ -48,10 +48,9 @@ def index():
 @require_auth
 def add_recipe_to_cookbook_endpoint():
     recipe = request.get_json()
-    url = recipe["url"]
     cookbook_name = request.headers.get("cookbook-name")
     user_id = request.user["user_id"]
-    recipe_id = add_recipe_to_cookbook(user_id, cookbook_name, recipe, url)
+    recipe_id = add_recipe_to_cookbook(user_id, cookbook_name, recipe)
     if recipe_id:
         return jsonify({"recipe_id": recipe_id}), 200
     else:

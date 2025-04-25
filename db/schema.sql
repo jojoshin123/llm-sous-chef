@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS recipes (
-    id TEXT PRIMARY KEY, -- primary key will be URL?
+    id SERIAL PRIMARY KEY,
     recipe BYTEA,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     cookbook_id INTEGER REFERENCES cookbooks(id) ON DELETE SET NULL
@@ -25,4 +25,4 @@ CREATE TABLE IF NOT EXISTS cookbook_user_map (
     cookbook_id INTEGER NOT NULL REFERENCES cookbooks(id)
 );
 
---GRANT USAGE, SELECT ON SEQUENCE cookbook_id_seq, users_id_seq TO <username>;
+--GRANT USAGE, SELECT ON SEQUENCE cookbooks_id_seq, users_id_seq, recipes_id_seq TO <username>;

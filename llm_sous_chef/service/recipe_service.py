@@ -1,3 +1,4 @@
+import json
 import re
 import requests
 from bs4 import BeautifulSoup
@@ -17,7 +18,7 @@ def generate_recipe(url: str):
     data["relatedLink"] = related_link
 
     # Send to LLM to construct recipe
-    response = get_recipe(data)
+    response = get_recipe(data, url)
     return response
 
 
@@ -56,5 +57,44 @@ def create_cookbook(user_id: str, cookbook_name: str) -> str:
             cookbook_id = None
         return cookbook_id
 
-def get_cookbook(user_id: str, cookbook_name: str) -> str:
-    # Check if there is a user->cookbook mapping?
+def add_recipe_to_cookbook(user_id: str, cookbook_name: str, recipe: dict) -> str:
+# TODO: Do I need to check if there is a user->cookbook mapping?
+# TODO: See if recipe is in table already?
+    with conn.cursor() as cur:
+        cur.execute("""
+                        SELECT id FROM cookbooks
+                        WHERE name=%s
+                        """,
+                    (cookbook_name,)
+            )
+        cookbook_id = cur.fetchone()[0]
+        recipe_bytes = json.dumps(recipe).encode('utf-8')
+        try:
+            cur.execute("""
+                        INSERT INTO recipes (recipe, user_id, cookbook_id)
+                        VALUES (%s, %s, %s)
+                        RETURNING id""",
+                    (recipe_bytes, user_id, cookbook_id)
+            )
+            recipe_id = cur.fetchone()[0]
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            print("Error creating recipe:", e)
+            recipe_id = None
+        return recipe_id
+
+# Returns all recipes in cookbook
+# def get_cookbook(user_id: str, cookbook_name: str) -> str:
+#     with conn.cursor() as cur:
+#         try:
+#             cur.execute("""
+#                         SELECT name from (name)
+#                         VALUES (%s)
+#                         RETURNING id""",
+#                     (cookbook_name,)
+#             )
+#             cookbook_id = cur.fetchone()[0]
+#             conn.commit()
+#         except Exception as e:
+
