@@ -55,3 +55,6 @@ def create_cookbook(user_id: str, cookbook_name: str) -> str:
             print("Error creating cookbook:", e)
             cookbook_id = None
         return cookbook_id
+
+def get_cookbook(user_id: str, cookbook_name: str) -> str:
+    # Check if there is a user->cookbook mapping?
