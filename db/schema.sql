@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS recipes (
     id TEXT PRIMARY KEY, -- primary key will be URL?
+    -- TODO: Add blob for JSON recipe in here
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     cookbook_id INTEGER REFERENCES cookbooks(id) ON DELETE SET NULL
 );
