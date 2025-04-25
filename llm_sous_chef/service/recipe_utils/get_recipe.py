@@ -2,7 +2,7 @@ from groq import Groq
 
 client = Groq()
 
-def get_recipe(video_data):
+def get_recipe(video_data, recipe_url):
     # Create a transcription of the audio file
     chat_completion = client.chat.completions.create(
         messages=[
@@ -16,17 +16,18 @@ def get_recipe(video_data):
             # Set a user message for the assistant to respond to.
             {
                 "role": "user",
-                "content": """
+                "content": f"""
                 Using this metadata and transcription of a cooking TikTok, please generate a recipe.
                 I want you to return this recipe as a JSON object in the format specified below.
-                {
+                {{
+                    "url", {recipe_url},
                     "description": "",
                     "ingredients": [""] (These should contain both the ingredient QUANTITY and NAME.
                             If quantity is not mentioned in the video metadata, then please generate your own quantities
                             based on similar recipes.)
                     "instructions": [],
                     "title": ""
-                }
+                }}
                 """ + str(video_data),
             }
         ],

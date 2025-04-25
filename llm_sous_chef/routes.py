@@ -4,7 +4,7 @@ from flask import Blueprint, request, jsonify
 
 from llm_sous_chef.auth import require_auth
 from llm_sous_chef.service.user_service import get_users, add_users, login
-from llm_sous_chef.service.recipe_service import generate_recipe, create_cookbook
+from llm_sous_chef.service.recipe_service import generate_recipe, create_cookbook, add_recipe_to_cookbook
 
 main = Blueprint("main", __name__)
 
@@ -44,6 +44,18 @@ def index():
     response = generate_recipe(url)
     return json.loads(response)
 
+@main.route("/recipes/add-recipe-to-cookbook", methods=["POST"])
+@require_auth
+def add_recipe_to_cookbook_endpoint():
+    recipe = request.get_json()
+    url = recipe["url"]
+    cookbook_name = request.headers.get("cookbook-name")
+    user_id = request.user["user_id"]
+    recipe_id = add_recipe_to_cookbook(user_id, cookbook_name, recipe, url)
+    if recipe_id:
+        return jsonify({"recipe_id": recipe_id}), 200
+    else:
+        return jsonify({"error": "Error creating recipe"}), 500
 
 @main.route("/recipes/create-cookbook", methods=["POST"])
 @require_auth
