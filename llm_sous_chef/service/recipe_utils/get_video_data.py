@@ -20,16 +20,24 @@ def download_video(url: str):
             "quiet": False,
         }
 
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([url])
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([url])
 
-        with open(temp_output_filename + ".info.json", "rb") as file:
-            data = json.load(file)
+            with open(temp_output_filename + ".info.json", "rb") as file:
+                data = json.load(file)
 
-        # Get audio form of video
-        extract_audio(temp_output_filename)
-        # Get transcription of video
-        transcription = get_transcription(temp_output_filename)
+            # Get audio form of video
+            extract_audio(temp_output_filename)
+            # Get transcription of video
+            transcription = get_transcription(temp_output_filename)
+        except Exception as e:
+            print("URL is not video content:", e)
+            data = {
+                "title": url,
+                "description": url
+            }
+            transcription = ""
 
         return {
             "uuid": temp_output_filename,
