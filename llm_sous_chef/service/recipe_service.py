@@ -59,17 +59,18 @@ def create_cookbook(user_id: str, cookbook_name: str) -> str:
             cookbook_id = None
         return cookbook_id
 
-def add_recipe_to_cookbook(user_id: str, cookbook_name: str, recipe: dict) -> str:
+def add_recipe_to_cookbook(user_id: str, cookbook_name: str, recipe: dict, url: str) -> str:
     # TODO: Do I need to check if there is a user->cookbook mapping?
     with conn.cursor() as cur:
         cookbook_id = get_cookbook_id(cur, cookbook_name)
         recipe_bytes = json.dumps(recipe).encode('utf-8')
         try:
             cur.execute("""
-                        INSERT INTO recipes (recipe, user_id, cookbook_id)
-                        VALUES (%s, %s, %s)
-                        RETURNING id""",
-                    (recipe_bytes, user_id, cookbook_id)
+                        INSERT INTO recipes (url, recipe, user_id, cookbook_id)
+                        VALUES (%s, %s, %s, %s)
+                        RETURNING id
+                        """,
+                    (url, recipe_bytes, user_id, cookbook_id)
             )
             recipe_id = cur.fetchone()[0]
             conn.commit()
@@ -85,7 +86,6 @@ def get_cookbook(cookbook_name: str) -> list[dict]:
     with conn.cursor() as cur:
         try:
             cookbook_id = get_cookbook_id(cur, cookbook_name)
-            print(f'\n\n\n{cookbook_id}\n\n\n')
             cur.execute("""
                             SELECT recipe from recipes
                             WHERE cookbook_id=%s
