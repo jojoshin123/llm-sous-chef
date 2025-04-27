@@ -18,7 +18,9 @@ CREATE TABLE IF NOT EXISTS recipes (
 CREATE TABLE IF NOT EXISTS cookbooks (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    user_id TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE (name, user_id)
 );
 
 CREATE TABLE IF NOT EXISTS cookbook_user_map (
