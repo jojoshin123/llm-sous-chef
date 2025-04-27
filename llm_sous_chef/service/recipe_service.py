@@ -2,7 +2,7 @@ import json
 import re
 
 import psycopg
-import requests
+import cfscrape
 from bs4 import BeautifulSoup
 
 from llm_sous_chef.service.recipe_utils.get_video_data import download_video
@@ -31,8 +31,9 @@ def check_for_url(text: str):
         print(f"URL matches found in description: {match}")
         for url in match:
             cleaned_url = url.strip("\n .,;:!?")
-            response = requests.get(cleaned_url)
-            soup = BeautifulSoup(response.text, "html.parser")
+            scraper = cfscrape.create_scraper()
+            raw_text = scraper.get(cleaned_url).text
+            soup = BeautifulSoup(raw_text, "html.parser")
             text = soup.get_text()
             return text
 
@@ -40,10 +41,10 @@ def create_cookbook(user_id: str, cookbook_name: str) -> str:
     with conn.cursor() as cur:
         try:
             cur.execute("""
-                        INSERT INTO cookbooks (name)
-                        VALUES (%s)
+                        INSERT INTO cookbooks (name, user_id)
+                        VALUES (%s, %s)
                         RETURNING id""",
-                    (cookbook_name,)
+                    (cookbook_name,user_id)
             )
             cookbook_id = cur.fetchone()[0]
             cur.execute("""
