@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 from llm_sous_chef.service.recipe_utils.get_video_data import download_video
 from llm_sous_chef.service.recipe_utils.get_recipe import get_recipe
-from llm_sous_chef.db.db import conn
+from llm_sous_chef.db.db import conn, get_user_tuple, get_cookbook_id
 
 
 def generate_recipe(url: str):
@@ -61,7 +61,6 @@ def create_cookbook(user_id: str, cookbook_name: str) -> str:
         return cookbook_id
 
 def add_recipe_to_cookbook(user_id: str, cookbook_name: str, recipe: dict, url: str) -> str:
-    # TODO: Do I need to check if there is a user->cookbook mapping?
     with conn.cursor() as cur:
         cookbook_id = get_cookbook_id(cur, cookbook_name)
         recipe_bytes = json.dumps(recipe).encode('utf-8')
@@ -83,7 +82,6 @@ def add_recipe_to_cookbook(user_id: str, cookbook_name: str, recipe: dict, url: 
 
 # Returns all recipes in cookbook
 def get_cookbook(cookbook_name: str) -> list[dict]:
-    # TODO: Do I need to check if there is a user->cookbook mapping?
     with conn.cursor() as cur:
         try:
             cookbook_id = get_cookbook_id(cur, cookbook_name)
@@ -102,15 +100,20 @@ def get_cookbook(cookbook_name: str) -> list[dict]:
             recipes = []
         return recipes
 
-
-# Helper functions
-
-def get_cookbook_id(cur: psycopg.Cursor, cookbook_name: str) -> str:
-    cur.execute("""
-                            SELECT id from cookbooks
-                            WHERE name=%s
+def share_cookbook(cookbook_name: str, new_user: str) -> str:
+    with conn.cursor() as cur:
+        try:
+            cookbook_id = get_cookbook_id(cur, cookbook_name)
+            new_user_id = get_user_tuple(cur, new_user)[0]
+            cur.execute("""
+                            INSERT INTO cookbook_user_map (user_id, cookbook_id)
+                            VALUES (%s, %s)
+                            RETURNING user_id, cookbook_id
                             """,
-                (cookbook_name,)
-                )
-    cookbook_id = cur.fetchone()[0]
-    return cookbook_id
+                (new_user_id, cookbook_id)
+            )
+            mapping = cur.fetchall()[0]
+        except Exception as e:
+            print("Error sharing cookbook with new user:", e)
+            mapping = None
+        return mapping

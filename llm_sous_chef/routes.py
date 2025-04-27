@@ -4,7 +4,8 @@ from flask import Blueprint, request, jsonify
 
 from llm_sous_chef.auth import require_auth, check_cookbook_access
 from llm_sous_chef.service.user_service import get_users, add_users, login
-from llm_sous_chef.service.recipe_service import generate_recipe, create_cookbook, add_recipe_to_cookbook, get_cookbook
+from llm_sous_chef.service.recipe_service import generate_recipe, create_cookbook, add_recipe_to_cookbook, get_cookbook, \
+    share_cookbook
 
 main = Blueprint("main", __name__)
 
@@ -83,8 +84,23 @@ def add_user_cookbook_endpoint():
         return jsonify({"error": "Error creating cookbook"}), 500
 
 
+@main.route("/recipes/share-cookbook", methods=["POST"])
+@require_auth
+@check_cookbook_access
+def share_cookbook_endpoint():
+    # Get username or email
+    new_user = request.headers.get("new-user-username") \
+        if request.headers.get("new-user-username") \
+        else request.headers.get("new-user-email")
 
+    cookbook_name = request.headers.get("cookbook-name")
+    user_id = request.user["user_id"]
 
+    cookbook_map_id = share_cookbook(cookbook_name, new_user)
+    if cookbook_map_id:
+        return jsonify({"cookbook_map_id": cookbook_map_id}), 200
+    else:
+        return jsonify({"error": "Error sharing cookbook with new user"}), 500
 
 
 @main.route("/recipes/add", methods=["POST"])

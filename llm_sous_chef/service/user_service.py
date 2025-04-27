@@ -1,7 +1,7 @@
 import bcrypt
-from llm_sous_chef.db.db import conn
-from llm_sous_chef.auth import create_jwt
 from psycopg import errors
+from llm_sous_chef.db.db import conn, get_user_tuple
+from llm_sous_chef.auth import create_jwt
 
 def get_users():
     with conn.cursor() as cur:
@@ -30,12 +30,7 @@ def add_users(username: str, email: str, raw_password: str):
 
 def login(user: str, raw_password: str) -> str | None:
     with conn.cursor() as cur:
-        cur.execute("""
-            SELECT id,hashed_pwd FROM users
-            WHERE username = %s OR email = %s
-            LIMIT 1
-        """, (user, user))
-        row = cur.fetchone()
+        row = get_user_tuple(cur, user)
         user_id, user_hashed_pwd = row[0],row[1]
         if verify_hash(raw_password, user_hashed_pwd):
             return create_jwt({"user_id": user_id})
@@ -48,6 +43,3 @@ def hash_string(plain_string: str) -> str:
 
 def verify_hash(plain_string: str, hashed_string: str) -> bool:
     return bcrypt.checkpw(plain_string.encode('utf-8'), hashed_string.encode('utf-8'))
-
-
-
