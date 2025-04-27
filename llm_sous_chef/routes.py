@@ -2,7 +2,7 @@ import json
 
 from flask import Blueprint, request, jsonify
 
-from llm_sous_chef.auth import require_auth
+from llm_sous_chef.auth import require_auth, check_cookbook_access
 from llm_sous_chef.service.user_service import get_users, add_users, login
 from llm_sous_chef.service.recipe_service import generate_recipe, create_cookbook, add_recipe_to_cookbook, get_cookbook
 
@@ -60,6 +60,7 @@ def add_recipe_to_cookbook_endpoint():
 
 @main.route("/recipes/get-recipes-in-cookbook", methods=["GET"])
 @require_auth
+@check_cookbook_access
 def get_user_cookbook_endpoint():
     cookbook_name = request.headers.get("cookbook-name")
     recipes = get_cookbook(cookbook_name)
@@ -80,6 +81,7 @@ def add_user_cookbook_endpoint():
         return jsonify({"cookbook_id": cookbook_id}), 200
     else:
         return jsonify({"error": "Error creating cookbook"}), 500
+
 
 
 
