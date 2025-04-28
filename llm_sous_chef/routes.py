@@ -5,7 +5,7 @@ from flask import Blueprint, request, jsonify
 from llm_sous_chef.auth import require_auth, check_cookbook_access
 from llm_sous_chef.service.user_service import get_users, add_users, login
 from llm_sous_chef.service.recipe_service import generate_recipe, create_cookbook, add_recipe_to_cookbook, get_cookbook, \
-    share_cookbook
+    share_cookbook, delete_recipe_from_cookbook
 
 main = Blueprint("main", __name__)
 
@@ -46,7 +46,7 @@ def index():
     return json.loads(response)
 
 
-@main.route("/recipes/add-recipe-to-cookbook", methods=["POST"])
+@main.route("/recipes/add-recipe", methods=["POST"])
 @require_auth
 def add_recipe_to_cookbook_endpoint():
     recipe = request.get_json()
@@ -59,18 +59,35 @@ def add_recipe_to_cookbook_endpoint():
     else:
         return jsonify({"error": "Error creating recipe"}), 500
 
-@main.route("/recipes/get-recipes-in-cookbook", methods=["GET"])
+@main.route("/recipes/delete-recipe", methods=["POST"])
+@require_auth
+@check_cookbook_access
+def delete_user_recipe_endpoint():
+    cookbook_name = request.headers.get("cookbook-name")
+    recipe_id = request.headers.get("recipe-id")
+    user_id = request.user["user_id"]
+    rows_deleted = delete_recipe_from_cookbook(cookbook_name, user_id, recipe_id)
+    if rows_deleted:
+        return jsonify({"message": "Successfully deleted recipe"}), 200
+    elif rows_deleted == 0:
+        return jsonify({"error": "Recipe not found in cookbook"}), 500
+    else:
+        return jsonify({"error": "Error deleting recipe"}), 500
+
+
+@main.route("/recipes/get-recipes", methods=["GET"])
 @require_auth
 @check_cookbook_access
 def get_user_cookbook_endpoint():
     cookbook_name = request.headers.get("cookbook-name")
     recipes = get_cookbook(cookbook_name)
     if recipes:
-        return jsonify({"recipes": recipes}), 200
+        return recipes, 200
     elif len(recipes) == 0:
         return jsonify({"error": f"No Recipes found in cookbook {cookbook_name}"}), 200
     else:
         return jsonify({"error": "Error fetching recipes in cookbook"}), 500
+
 
 @main.route("/recipes/create-cookbook", methods=["POST"])
 @require_auth
@@ -102,9 +119,3 @@ def share_cookbook_endpoint():
     else:
         return jsonify({"error": "Error sharing cookbook with new user"}), 500
 
-
-@main.route("/recipes/add", methods=["POST"])
-@require_auth
-def add_user_recipe_endpoint():
-
-    return None

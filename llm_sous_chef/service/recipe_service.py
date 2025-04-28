@@ -86,19 +86,41 @@ def get_cookbook(cookbook_name: str) -> list[dict]:
         try:
             cookbook_id = get_cookbook_id(cur, cookbook_name)
             cur.execute("""
-                            SELECT recipe from recipes
+                            SELECT id, recipe from recipes
                             WHERE cookbook_id=%s
                             """,
             (cookbook_id,)
             )
             recipe_tuples = cur.fetchall()
-            recipes = [tup[0].decode('utf-8') for tup in recipe_tuples]
+            recipes = [{
+                "id": tup[0],
+                "recipe": tup[1].decode('utf-8')
+            } for tup in recipe_tuples]
 
             return recipes
         except Exception as e:
             print("Error fetching cookbook:", e)
             recipes = []
         return recipes
+
+def delete_recipe_from_cookbook(cookbook_name: str, user_id: str, recipe_id: str) -> int:
+    with conn.cursor() as cur:
+        try:
+            cookbook_id = get_cookbook_id(cur, cookbook_name)
+            print(f"user_id:{user_id}, cookbook_id:{cookbook_id}")
+            cur.execute("""
+                            DELETE FROM recipes
+                            WHERE id=%s AND cookbook_id=%s
+                            """,
+                (recipe_id, cookbook_id)
+            )
+            rows_deleted = cur.rowcount
+            conn.commit()
+            return rows_deleted
+        except Exception as e:
+            conn.rollback()
+            print("Error deleting recipe:", e)
+            return -1
 
 def share_cookbook(cookbook_name: str, new_user: str) -> str:
     with conn.cursor() as cur:
