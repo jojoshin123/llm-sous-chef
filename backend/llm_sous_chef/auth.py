@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from flask import request, jsonify
 
 from llm_sous_chef.db.db import conn
-from llm_sous_chef.service.recipe_service import get_cookbook_id
+# from llm_sous_chef.service.recipe_service import get_cookbook_id
 
 EXPIRATION_MINUTES = 120
 SECRET_KEY = os.getenv("JWT_SECRET")

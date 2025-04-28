@@ -37,7 +37,7 @@ def get_cookbook_name(cookbook_id: str, cur=None) -> str:
 
 def get_user_tuple(cur: psycopg.Cursor, user_name: str) -> str:
     cur.execute("""
-                    SELECT id,hashed_pwd FROM users
+                    SELECT id,username,hashed_pwd FROM users
                     WHERE username = %s OR email = %s
                     LIMIT 1""",
                 (user_name,user_name)

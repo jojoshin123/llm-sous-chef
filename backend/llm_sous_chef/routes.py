@@ -30,11 +30,11 @@ def signup_endpoint():
 @main.route("/login", methods=["POST"])
 def login_endpoint():
     # Get username or email
-    user = request.headers.get("username") if request.headers.get("username") else request.headers.get("email")
+    user = request.headers.get("user-id")
     pwd = request.headers.get("password")
     result = login(user, pwd)
     if result:
-        return jsonify({"token": str(result)}), 200
+        return result, 200
     else:
         return jsonify({"error": "Unauthorized"}), 401
 

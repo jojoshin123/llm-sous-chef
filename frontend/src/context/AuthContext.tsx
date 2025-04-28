@@ -20,7 +20,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'username': identifier,
+          'user-id': identifier,
           'password': password,
         },
       });
@@ -32,9 +32,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await response.json();
       const token = data['token']
 
-      localStorage.setItem('token', token);
+      localStorage.setItem('token', token); //TODO: is persistent session actually working?
       setIsAuthenticated(true);
-      setUserName(data.userName || identifier);
+      console.log(data.username);
+      setUserName(data.username);
     } catch (error) {
       console.error('Login error:', error);
       throw error;

@@ -28,12 +28,16 @@ def add_users(username: str, email: str, raw_password: str):
         conn.rollback()
         return None
 
-def login(user: str, raw_password: str) -> str | None:
+def login(user: str, raw_password: str) -> dict | None:
     with conn.cursor() as cur:
         row = get_user_tuple(cur, user)
-        user_id, user_hashed_pwd = row[0],row[1]
+        user_id, username, user_hashed_pwd = row[0],row[1],row[2]
         if verify_hash(raw_password, user_hashed_pwd):
-            return create_jwt({"user_id": user_id})
+            response = {
+                "username": username,
+                "token": str(create_jwt({"user_id": user_id}))
+            }
+            return response
 
 # _________ bcrypt helpers _________
 
