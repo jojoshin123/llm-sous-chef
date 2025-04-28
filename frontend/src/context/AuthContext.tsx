@@ -1,0 +1,62 @@
+import React, { createContext, useContext, useState } from 'react';
+
+interface AuthContextType {
+  isAuthenticated: boolean;
+  userName: string;
+  token: string
+  login: (identifier: string, password: string) => Promise<void>;
+  logout: () => void;
+}
+
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userName, setUserName] = useState('');
+
+  const login = async (identifier: string, password: string) => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'username': identifier,
+          'password': password,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const data = await response.json();
+      const token = data['token']
+
+      localStorage.setItem('token', token);
+      setIsAuthenticated(true);
+      setUserName(data.userName || identifier);
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    setUserName('');
+  };
+
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, userName, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
