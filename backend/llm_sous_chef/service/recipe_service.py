@@ -80,8 +80,35 @@ def add_recipe_to_cookbook(user_id: str, cookbook_name: str, recipe: dict, url: 
             recipe_id = None
         return recipe_id
 
+def get_cookbooks(user_id: str) -> list[dict]:
+    with conn.cursor() as cur:
+        try:
+            cur.execute("""
+                            SELECT cookbook_id from cookbook_user_map
+                            WHERE user_id=%s
+                            """,
+                (user_id,)
+            )
+            cookbook_ids = [tup[0] for tup in cur.fetchall()]
+
+            cur.execute("""
+                            SELECT id,name from cookbooks
+                            WHERE id=ANY(%s)
+                            """,
+                (cookbook_ids,)
+            )
+            tuples = cur.fetchall()
+            cookbooks = [{
+                "id":tup[0],
+                "name": tup[1]
+            } for tup in tuples]
+        except Exception as e:
+            print("Error sharing cookbook with new user:", e)
+            cookbooks = []
+        return cookbooks
+
 # Returns all recipes in cookbook
-def get_cookbook(cookbook_name: str) -> list[dict]:
+def get_recipes_in_cookbook(cookbook_name: str) -> list[dict]:
     with conn.cursor() as cur:
         try:
             cookbook_id = get_cookbook_id(cur, cookbook_name)
@@ -107,7 +134,6 @@ def delete_recipe_from_cookbook(cookbook_name: str, user_id: str, recipe_id: str
     with conn.cursor() as cur:
         try:
             cookbook_id = get_cookbook_id(cur, cookbook_name)
-            print(f"user_id:{user_id}, cookbook_id:{cookbook_id}")
             cur.execute("""
                             DELETE FROM recipes
                             WHERE id=%s AND cookbook_id=%s
