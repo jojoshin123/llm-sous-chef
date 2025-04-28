@@ -1,13 +1,11 @@
 import json
 import re
-
-import psycopg
 import cfscrape
 from bs4 import BeautifulSoup
 
 from llm_sous_chef.service.recipe_utils.get_video_data import download_video
 from llm_sous_chef.service.recipe_utils.get_recipe import get_recipe
-from llm_sous_chef.db.db import conn, get_user_tuple, get_cookbook_id
+from llm_sous_chef.db.db import conn, get_user_tuple
 
 
 def generate_recipe(url: str):
@@ -60,9 +58,8 @@ def create_cookbook(user_id: str, cookbook_name: str) -> str:
             cookbook_id = None
         return cookbook_id
 
-def add_recipe_to_cookbook(user_id: str, cookbook_name: str, recipe: dict, url: str) -> str:
+def add_recipe_to_cookbook(user_id: str, cookbook_id: str, recipe: dict, url: str) -> str:
     with conn.cursor() as cur:
-        cookbook_id = get_cookbook_id(cur, cookbook_name)
         recipe_bytes = json.dumps(recipe).encode('utf-8')
         try:
             cur.execute("""
@@ -129,10 +126,9 @@ def get_recipes_in_cookbook(cookbook_id: str) -> list[dict]:
             recipes = []
         return recipes
 
-def delete_recipe_from_cookbook(cookbook_name: str, user_id: str, recipe_id: str) -> int:
+def delete_recipe_from_cookbook(cookbook_id: str, recipe_id: str) -> int:
     with conn.cursor() as cur:
         try:
-            cookbook_id = get_cookbook_id(cur, cookbook_name)
             cur.execute("""
                             DELETE FROM recipes
                             WHERE id=%s AND cookbook_id=%s
@@ -147,10 +143,9 @@ def delete_recipe_from_cookbook(cookbook_name: str, user_id: str, recipe_id: str
             print("Error deleting recipe:", e)
             return -1
 
-def share_cookbook(cookbook_name: str, new_user: str) -> str:
+def share_cookbook(cookbook_id: str, new_user: str) -> str:
     with conn.cursor() as cur:
         try:
-            cookbook_id = get_cookbook_id(cur, cookbook_name)
             new_user_id = get_user_tuple(cur, new_user)[0]
             cur.execute("""
                             INSERT INTO cookbook_user_map (user_id, cookbook_id)

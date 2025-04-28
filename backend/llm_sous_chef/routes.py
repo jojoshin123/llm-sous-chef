@@ -53,9 +53,9 @@ def index():
 def add_recipe_to_cookbook_endpoint():
     recipe = request.get_json()
     url = recipe["url"]
-    cookbook_name = request.headers.get("cookbook-name")
+    cookbook_id = request.headers.get("cookbook-id")
     user_id = request.user["user_id"]
-    recipe_id = add_recipe_to_cookbook(user_id, cookbook_name, recipe, url)
+    recipe_id = add_recipe_to_cookbook(user_id, cookbook_id, recipe, url)
     if recipe_id:
         return jsonify({"recipe_id": recipe_id}), 200
     else:
@@ -65,10 +65,9 @@ def add_recipe_to_cookbook_endpoint():
 @require_auth
 @check_cookbook_access
 def delete_user_recipe_endpoint():
-    cookbook_name = request.headers.get("cookbook-name")
+    cookbook_id = request.headers.get("cookbook-id")
     recipe_id = request.headers.get("recipe-id")
-    user_id = request.user["user_id"]
-    rows_deleted = delete_recipe_from_cookbook(cookbook_name, user_id, recipe_id)
+    rows_deleted = delete_recipe_from_cookbook(cookbook_id, recipe_id)
     if rows_deleted:
         return jsonify({"message": "Successfully deleted recipe"}), 200
     elif rows_deleted == 0:
@@ -96,7 +95,6 @@ def get_user_cookbook_endpoint():
 @require_auth
 def get_cookbooks_endpoint():
     user_id = request.user["user_id"]
-    print(user_id)
     cookbooks = get_cookbooks(user_id)
     if cookbooks:
         return cookbooks, 200
@@ -127,10 +125,9 @@ def share_cookbook_endpoint():
         if request.headers.get("new-user-username") \
         else request.headers.get("new-user-email")
 
-    cookbook_name = request.headers.get("cookbook-name")
-    user_id = request.user["user_id"]
+    cookbook_id = request.headers.get("cookbook-id")
 
-    cookbook_map_id = share_cookbook(cookbook_name, new_user)
+    cookbook_map_id = share_cookbook(cookbook_id, new_user)
     if cookbook_map_id:
         return jsonify({"cookbook_map_id": cookbook_map_id}), 200
     else:
