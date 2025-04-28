@@ -7,14 +7,12 @@ import Footer from '../components/Footer';
 const CookbooksPage: React.FC = () => {
   const navigate = useNavigate();
   const [cookbooks, setCookbooks] = useState(null);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   
-  // Mock data - replace with actual data fetching
   useEffect(() => {
     // Define an async function inside useEffect
     const fetchData = async () => {
         const token = localStorage.getItem('token');
-        console.log()
         try {
           const response = await fetch('http://127.0.0.1:5000/recipes/get-cookbooks',{
               method: 'GET',
@@ -28,7 +26,8 @@ const CookbooksPage: React.FC = () => {
           const result = await response.json();
           setCookbooks(result); // Save the data into state
         } catch (err) {
-          setError(err.message); // Save the error if any
+          const message = err instanceof Error ? err.message : 'Unknown error';
+          setError(message);
         }
       };
     fetchData();

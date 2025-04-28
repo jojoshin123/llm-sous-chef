@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Clock, Users, ChevronRight } from 'lucide-react';
 import Header from '../components/Header';
@@ -8,38 +8,45 @@ import type { Recipe } from '../types/recipe';
 const CookbookDetailPage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [cookbookName, setCookbookName] = useState<String>("");
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [error, setError] = useState("");
   
   // Mock data - replace with actual data fetching
-  const cookbook = {
-    id,
-    name: 'Weeknight Dinners',
-    recipes: [
-      {
-        id: "1",
-        recipe: {
-          title: "Classic Spaghetti Carbonara",
-          description: "A traditional Roman pasta dish made with eggs, hard cheese, cured pork, and black pepper.",
-          cookTime: "30 mins",
-          servings: 4,
-          ingredients: [],
-          instructions: [],
-          url: ""
-        }
-      },
-      {
-        id: "2",
-        recipe: {
-          title: "Chicken Stir Fry",
-          description: "Quick and healthy stir-fried chicken with colorful vegetables in a savory sauce.",
-          cookTime: "25 mins",
-          servings: 4,
-          ingredients: [],
-          instructions: [],
-          url: ""
-        }
-      }
-    ] as Recipe[]
-  };
+  useEffect(() => {
+      const fetchData = async () => {
+          const token = localStorage.getItem('token');
+          try {
+            const response = await fetch('http://127.0.0.1:5000/recipes/get-recipes',{
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'cookbook-id' : id!
+                  },
+                });
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            setRecipes(result["recipes"]);
+            setCookbookName(result["name"]);
+            
+          } catch (err) {
+            const message = err instanceof Error ? err.message : 'Unknown error';
+            setError(message);
+          }
+        };
+      fetchData();
+    }, []);
+
+    if (error) {
+      return <div>Error: {error}</div>;
+    }
+    if (!recipes) {
+      return <div>Loading...</div>;
+    }
 
   return (
     <div className="min-h-screen flex flex-col bg-papyrus-50">
@@ -57,10 +64,10 @@ const CookbookDetailPage: React.FC = () => {
             </Link>
           </div>
 
-          <h1 className="text-3xl font-serif text-papyrus-800 mb-8">{cookbook.name}</h1>
+          <h1 className="text-3xl font-serif text-papyrus-800 mb-8">{cookbookName}</h1>
 
           <div className="space-y-4">
-            {cookbook.recipes.map((recipe) => (
+            {recipes.map((recipe) => (
               <div
                 key={recipe.id}
                 onClick={() => navigate(`/cookbooks/${id}/recipes/${recipe.id}`)}
@@ -69,10 +76,10 @@ const CookbookDetailPage: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex-grow">
                     <h2 className="text-xl font-serif text-papyrus-800 mb-2 group-hover:text-papyrus-600 transition-colors">
-                      {recipe.recipe.title}
+                      {recipe.title}
                     </h2>
                     <p className="text-papyrus-600 font-serif line-clamp-2">
-                      {recipe.recipe.description}
+                      {recipe.description}
                     </p>
                   </div>
                   <ChevronRight size={20} className="text-papyrus-400 group-hover:text-papyrus-600 transition-colors" />
@@ -80,11 +87,13 @@ const CookbookDetailPage: React.FC = () => {
                 <div className="flex items-center gap-6 mt-4 text-papyrus-600">
                   <div className="flex items-center gap-2">
                     <Clock size={18} />
-                    <span className="font-serif">{recipe.recipe.cookTime}</span>
+                    {/* TODO: Add cook time into backend*/}
+                    <span className="font-serif">30 min</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Users size={18} />
-                    <span className="font-serif">Serves {recipe.recipe.servings}</span>
+                    {/* TODO: Add servings into backend*/}
+                    <span className="font-serif">Serves 2</span>
                   </div>
                 </div>
               </div>
