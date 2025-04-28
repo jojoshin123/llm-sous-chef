@@ -13,17 +13,24 @@ const CookbooksPage: React.FC = () => {
   useEffect(() => {
     // Define an async function inside useEffect
     const fetchData = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:5000/recipes/get-cookbooks');
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        const token = localStorage.getItem('token');
+        console.log()
+        try {
+          const response = await fetch('http://127.0.0.1:5000/recipes/get-cookbooks',{
+              method: 'GET',
+              headers: {
+                  'Authorization': 'Bearer ' + token,
+                },
+              });
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const result = await response.json();
+          setCookbooks(result); // Save the data into state
+        } catch (err) {
+          setError(err.message); // Save the error if any
         }
-        const result = await response.json();
-        setCookbooks(result); // Save the data into state
-      } catch (err) {
-        setError(err.message); // Save the error if any
-      }
-    };
+      };
     fetchData();
   }, []);
 
