@@ -99,7 +99,7 @@ def get_cookbooks(user_id: str) -> list[dict]:
             )
             tuples = cur.fetchall()
             cookbooks = [{
-                "id":tup[0],
+                "id": tup[0],
                 "name": tup[1]
             } for tup in tuples]
         except Exception as e:
@@ -108,10 +108,9 @@ def get_cookbooks(user_id: str) -> list[dict]:
         return cookbooks
 
 # Returns all recipes in cookbook
-def get_recipes_in_cookbook(cookbook_name: str) -> list[dict]:
+def get_recipes_in_cookbook(cookbook_id: str) -> list[dict]:
     with conn.cursor() as cur:
         try:
-            cookbook_id = get_cookbook_id(cur, cookbook_name)
             cur.execute("""
                             SELECT id, recipe from recipes
                             WHERE cookbook_id=%s
@@ -121,7 +120,7 @@ def get_recipes_in_cookbook(cookbook_name: str) -> list[dict]:
             recipe_tuples = cur.fetchall()
             recipes = [{
                 "id": tup[0],
-                "recipe": tup[1].decode('utf-8')
+                **json.loads(tup[1].decode('utf-8'))
             } for tup in recipe_tuples]
 
             return recipes

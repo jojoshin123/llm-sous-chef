@@ -3,6 +3,7 @@ import json
 from flask import Blueprint, request, jsonify
 
 from llm_sous_chef.auth import require_auth, check_cookbook_access
+from llm_sous_chef.db.db import get_cookbook_name
 from llm_sous_chef.service.user_service import get_users, add_users, login
 from llm_sous_chef.service.recipe_service import generate_recipe, create_cookbook, add_recipe_to_cookbook, \
     get_recipes_in_cookbook, \
@@ -80,10 +81,12 @@ def delete_user_recipe_endpoint():
 @require_auth
 @check_cookbook_access
 def get_user_cookbook_endpoint():
-    cookbook_name = request.headers.get("cookbook-name")
-    recipes = get_recipes_in_cookbook(cookbook_name)
+    cookbook_id = request.headers.get("cookbook-id")
+    recipes = get_recipes_in_cookbook(cookbook_id)
+
+    cookbook_name = get_cookbook_name(cookbook_id)
     if recipes:
-        return recipes, 200
+        return jsonify({"name": cookbook_name,"recipes": recipes}), 200
     elif len(recipes) == 0:
         return jsonify({"error": f"No Recipes found in cookbook {cookbook_name}"}), 200
     else:

@@ -40,11 +40,12 @@ def check_cookbook_access(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         user_id = request.user["user_id"]
-        cookbook_name = request.headers.get("cookbook-name")
+        # cookbook_name = request.headers.get("cookbook-name")
+        cookbook_id = request.headers.get("cookbook-id")
 
         with conn.cursor() as cur:
             # Get cookbook_id
-            cookbook_id = get_cookbook_id(cur, cookbook_name)
+            # cookbook_id = get_cookbook_id(cur, cookbook_name)
             try:
                 print(f"{user_id},{cookbook_id}")
                 cur.execute("""

@@ -23,6 +23,18 @@ def get_cookbook_id(cur: psycopg.Cursor, cookbook_name: str) -> str:
     cookbook_id = cur.fetchone()[0]
     return cookbook_id
 
+def get_cookbook_name(cookbook_id: str, cur=None) -> str:
+    if not cur:
+        cur = conn.cursor()
+    cur.execute("""
+                            SELECT name from cookbooks
+                            WHERE id=%s
+                            """,
+                (cookbook_id,)
+                )
+    cookbook_name = cur.fetchone()[0]
+    return cookbook_name
+
 def get_user_tuple(cur: psycopg.Cursor, user_name: str) -> str:
     cur.execute("""
                     SELECT id,hashed_pwd FROM users
