@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -6,6 +7,7 @@ interface AuthContextType {
   token: string
   login: (identifier: string, password: string) => Promise<void>;
   logout: () => void;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -13,6 +15,24 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    try{
+      const token = localStorage.getItem('token');
+      if (token) {
+        setIsAuthenticated(true);
+
+        const decodedToken = jwtDecode(token);
+        setUserName(decodedToken.username);
+      }
+    } catch (error) {
+      console.error('JWT Token expired', error);
+      setIsAuthenticated(false);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const login = async (identifier: string, password: string) => {
     try {
@@ -48,7 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userName, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, userName, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

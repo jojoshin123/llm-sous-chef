@@ -5,20 +5,23 @@ import HomePage from './pages/HomePage';
 import CookbooksPage from './pages/CookbooksPage';
 import CookbookDetailPage from './pages/CookbookDetailPage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
+import SignupConfirmation from './pages/SignupConfirmationPage';
 
 const ProtectedRoute: React.FC<{ element: React.ReactElement }> = ({ element }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) {
+    return <></>;
+  }
   return isAuthenticated ? element : <Navigate to="/" />;
 };
 
 function AppRoutes() {
-  const { isAuthenticated } = useAuth();
   
   return (
     <Routes>
       <Route 
         path="/" 
-        element={isAuthenticated ? <Navigate to="/cookbooks" /> : <HomePage />} 
+        element={<HomePage />} 
       />
       <Route 
         path="/cookbooks" 
@@ -31,6 +34,10 @@ function AppRoutes() {
       <Route 
         path="/cookbooks/:cookbookId/recipes/:recipeId" 
         element={<ProtectedRoute element={<RecipeDetailPage />} />} 
+      />
+      <Route 
+        path="/signup-confirmation" 
+        element={<SignupConfirmation />}
       />
     </Routes>
   );
