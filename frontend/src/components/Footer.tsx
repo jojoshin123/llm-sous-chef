@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
       <div className="max-w-6xl mx-auto">
         <div className="border-t border-papyrus-200 pt-6 flex flex-col sm:flex-row justify-between items-center">
           <p className="font-serif text-papyrus-600 text-sm mb-4 sm:mb-0">
-            © {new Date().getFullYear()} RecipeParser. All rights reserved.
+            © {new Date().getFullYear()} LLM Sous Chef
           </p>
           
           <div className="flex gap-4 items-center">
