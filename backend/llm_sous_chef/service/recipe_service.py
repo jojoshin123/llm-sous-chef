@@ -95,10 +95,23 @@ def get_cookbooks(user_id: str) -> list[dict]:
                 (cookbook_ids,)
             )
             tuples = cur.fetchall()
+            cookbook_name_map = {cookbook_id: name for cookbook_id, name in tuples}
+
+            # Get Recipe counts
+            cur.execute("""
+                            SELECT cookbook_id, COUNT(*) AS recipe_count
+                            FROM recipes
+                            WHERE cookbook_id = ANY(%s)
+                            GROUP BY cookbook_id;
+                            """,
+                (cookbook_ids,)
+            )
+            cookbook_recipe_count_tuples = cur.fetchall()
             cookbooks = [{
                 "id": tup[0],
-                "name": tup[1]
-            } for tup in tuples]
+                "name": cookbook_name_map[tup[0]],
+                "recipe_count": tup[1]
+            } for tup in cookbook_recipe_count_tuples]
         except Exception as e:
             print("Error sharing cookbook with new user:", e)
             cookbooks = []
