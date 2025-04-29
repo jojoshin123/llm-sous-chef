@@ -21,10 +21,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try{
       const token = localStorage.getItem('token');
       if (token) {
-        setIsAuthenticated(true);
-
         const decodedToken = jwtDecode(token);
-        setUserName(decodedToken.username);
+        const currentTime = Date.now() / 1000; // Current time in seconds
+        if (decodedToken.exp && decodedToken.exp < currentTime) {
+          throw new Error('JWT Token expired');
+        }else{
+          setIsAuthenticated(true);
+          setUserName(decodedToken.username);
+        }        
       }
     } catch (error) {
       console.error('JWT Token expired', error);

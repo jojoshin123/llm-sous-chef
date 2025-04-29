@@ -4,9 +4,15 @@ import { BookOpen, Plus } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
+interface CookbookType {
+  id: number;
+  name: string;
+  recipe_count: number;
+}
+
 const CookbooksPage: React.FC = () => {
   const navigate = useNavigate();
-  const [cookbooks, setCookbooks] = useState(null);
+  const [cookbooks, setCookbooks] = useState<CookbookType | null>(null);
   const [error, setError] = useState("");
   
   useEffect(() => {
@@ -67,7 +73,7 @@ const CookbooksPage: React.FC = () => {
                   <div className="flex items-start justify-between mb-4">
                     <BookOpen size={24} className="text-papyrus-600" />
                     <span className="text-sm text-papyrus-600 font-serif">
-                      {cookbook.recipeCount} recipes
+                      {cookbook.recipe_count} recipes
                     </span>
                   </div>
                   <h2 className="text-xl font-serif text-papyrus-800">{cookbook.name}</h2>
