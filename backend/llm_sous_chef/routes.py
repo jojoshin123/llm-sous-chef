@@ -99,7 +99,7 @@ def get_cookbooks_endpoint():
     if cookbooks:
         return cookbooks, 200
     elif len(cookbooks) == 0:
-        return jsonify({"error": "No cookbooks found"}), 200
+        return jsonify({"error": "No cookbooks found"}), 204
     else:
         return jsonify({"error": "Error creating cookbook"}), 500
 

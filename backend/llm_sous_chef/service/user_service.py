@@ -35,7 +35,7 @@ def login(user: str, raw_password: str) -> dict | None:
         if verify_hash(raw_password, user_hashed_pwd):
             response = {
                 "username": username,
-                "token": str(create_jwt({"user_id": user_id}))
+                "token": str(create_jwt({"user_id": user_id, "username": username}))
             }
             return response
 
