@@ -36,6 +36,10 @@ function AppRoutes() {
         element={<ProtectedRoute element={<RecipeDetailPage />} />} 
       />
       <Route 
+        path="/recipes/new" 
+        element={<ProtectedRoute element={<RecipeDetailPage />} />} 
+      />
+      <Route 
         path="/signup-confirmation" 
         element={<SignupConfirmation />}
       />

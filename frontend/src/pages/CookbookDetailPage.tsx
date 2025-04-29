@@ -12,7 +12,6 @@ const CookbookDetailPage: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [error, setError] = useState("");
   
-  // Mock data - replace with actual data fetching
   useEffect(() => {
       const fetchData = async () => {
           const token = localStorage.getItem('token');
@@ -29,6 +28,7 @@ const CookbookDetailPage: React.FC = () => {
             }
 
             const result = await response.json();
+            console.log(result);
 
             setRecipes(result["recipes"]);
             setCookbookName(result["name"]);
@@ -70,7 +70,7 @@ const CookbookDetailPage: React.FC = () => {
             {recipes.map((recipe) => (
               <div
                 key={recipe.id}
-                onClick={() => navigate(`/cookbooks/${id}/recipes/${recipe.id}`)}
+                onClick={() => navigate(`/cookbooks/${id}/recipes/${recipe.id}`, { state: { recipe } })}
                 className="bg-white p-6 rounded-lg border border-papyrus-200 shadow-sm hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex items-center justify-between">

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Send } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import AlertModal from './AlertModal';
+import { useNavigate } from 'react-router-dom';
+import { Recipe } from '../types/recipe';
 
 interface UrlFormProps {
   onSubmit: (url: string) => void;
@@ -13,6 +15,7 @@ const UrlForm: React.FC<UrlFormProps> = () => {
   const [error, setError] = useState('');
   const [authError, setAuthError] = useState('');
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const onSubmit = () => {
     if (!isAuthenticated) {
@@ -22,7 +25,7 @@ const UrlForm: React.FC<UrlFormProps> = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic URL validation
@@ -35,12 +38,28 @@ const UrlForm: React.FC<UrlFormProps> = () => {
       new URL(url); // Will throw if invalid URL
       setError('');
       setIsSubmitting(true);
+      const token = localStorage.getItem('token');
       
-      // Simulate submission with a slight delay for animation
-      setTimeout(() => {
-        onSubmit(url);
+      console.log("Processing recipe URL:", url);      
+
+      const response = await fetch('http://127.0.0.1:5000/recipes/process', {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+          'url': url,
+        },
+      });
+
+      if (!response.ok) {
         setIsSubmitting(false);
-      }, 800);
+        setError('Failed to submit URL. Please try again.');
+        return;
+      }
+
+      const recipe: Recipe = await response.json();
+      setIsSubmitting(false);
+      navigate(`/recipes/new?url=${encodeURIComponent(url)}`, { state: { recipe } });
     } catch (err) {
       setError('Please enter a valid URL');
     }
@@ -94,11 +113,17 @@ const UrlForm: React.FC<UrlFormProps> = () => {
             {error}
           </p>
         )}
+        {isSubmitting && (
+          <div className="flex justify-center items-center my-2">
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-papyrus-300 border-t-transparent"></div>
+          </div>
+        )}
         
         <p className="mt-3 text-papyrus-700 text-sm text-center italic">
           Enter any recipe URL to extract ingredients and instructions
         </p>
       </form>
+      
       <AlertModal errorMessage={authError} onClose={() => setAuthError('')} />
     </>
   );

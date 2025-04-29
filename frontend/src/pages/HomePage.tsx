@@ -8,14 +8,9 @@ const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
 
-  const handleSubmitUrl = (url: string) => {
+  const handleSubmitUrl = async (url: string) => {
     setIsLoading(true);
     setMessage('');
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      setMessage(`Successfully submitted URL: ${url}`);
-    }, 2000);
   };
 
   return (
@@ -34,6 +29,7 @@ const HomePage: React.FC = () => {
                 {message}
               </div>
             )}
+
           </div>
         </div>
       </main>
