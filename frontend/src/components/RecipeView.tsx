@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Recipe } from '../types/recipe';
+import { ExternalLink } from 'lucide-react';
 
 interface RecipeViewProps {
   recipe: Recipe;
@@ -28,13 +29,25 @@ const RecipeView: React.FC<RecipeViewProps> = ({ recipe }) => {
 
       {/* Main Content */}
       <div className="flex-grow">
-        <h1 className="text-3xl font-serif text-papyrus-800 mb-4">
+        <h1 className="text-3xl font-serif text-papyrus-800">
           {recipe.recipe.title}
         </h1>
+
+        <p className="text-md font-serif py-4 text-papyrus-600 mb-4">
+          <a 
+            href={recipe.recipe.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className='inline-flex items-center gap-2 hover:text-papyrus-200 transition-colors'>
+            {recipe.recipe.url} <ExternalLink size={16}/>
+          </a>
+        </p>
         
         <p className="text-lg font-serif text-papyrus-600 mb-8">
           {recipe.recipe.description}
         </p>
+        
+        
 
         <div className="bg-white p-6 rounded-lg border border-papyrus-200 shadow-sm">
           <h2 className="text-xl font-serif text-papyrus-800 mb-4">Instructions</h2>
