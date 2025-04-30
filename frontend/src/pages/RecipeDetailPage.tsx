@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Plus } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import RecipeView from '../components/RecipeView';
@@ -31,9 +31,10 @@ const RecipeDetailPage: React.FC = () => {
             </Link>
             <button
               onClick={() => setShowCookbookModal(true)}
-              className="font-serif px-4 py-2 rounded-lg bg-papyrus-800 text-white hover:bg-papyrus-900 cursor-pointer transition-colors"
+              className="flex items-center gap-2 font-serif px-4 py-2 rounded-lg bg-papyrus-800 text-white hover:bg-papyrus-900 cursor-pointer transition-colors"
             >
-              Add to cookbook  <b>+</b> 
+              <Plus size={20} />
+              Add to cookbook
             </button>
             {showCookbookModal && (
                 <SelectCookbookModal 

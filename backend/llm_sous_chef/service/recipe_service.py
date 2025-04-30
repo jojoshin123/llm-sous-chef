@@ -90,31 +90,34 @@ def get_cookbooks(user_id: str) -> list[dict]:
                 (user_id,)
             )
             cookbook_ids = [tup[0] for tup in cur.fetchall()]
-
-            cur.execute("""
-                            SELECT id,name from cookbooks
-                            WHERE id=ANY(%s)
-                            """,
-                (cookbook_ids,)
-            )
-            tuples = cur.fetchall()
-            cookbook_name_map = {cookbook_id: name for cookbook_id, name in tuples}
+            #
+            # cur.execute("""
+            #                 SELECT id,name from cookbooks
+            #                 WHERE id=ANY(%s)
+            #                 """,
+            #     (cookbook_ids,)
+            # )
+            # tuples = cur.fetchall()
+            # cookbook_name_map = {cookbook_id: name for cookbook_id, name in tuples}
 
             # Get Recipe counts
+            # (The SELECT statement dictates the final output of id, name, recipe_count)
             cur.execute("""
-                            SELECT cookbook_id, COUNT(*) AS recipe_count
-                            FROM recipes
-                            WHERE cookbook_id = ANY(%s)
-                            GROUP BY cookbook_id;
+                            SELECT cookbooks.id AS cookbook_id, cookbooks.name, COUNT(recipes.id) AS recipe_count
+                            FROM cookbooks
+                            LEFT JOIN recipes ON cookbooks.id = recipes.cookbook_id
+                            WHERE cookbooks.id = ANY(%s)
+                            GROUP BY cookbooks.id, cookbooks.name;
                             """,
                 (cookbook_ids,)
             )
-            cookbook_recipe_count_tuples = cur.fetchall()
+            cookbook_tuples = cur.fetchall()
             cookbooks = [{
                 "id": tup[0],
-                "name": cookbook_name_map[tup[0]],
-                "recipe_count": tup[1]
-            } for tup in cookbook_recipe_count_tuples]
+                "name": tup[1],
+                "recipe_count": tup[2]
+            } for tup in cookbook_tuples]
+
         except Exception as e:
             print("Error sharing cookbook with new user:", e)
             cookbooks = []

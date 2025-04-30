@@ -90,10 +90,8 @@ def get_user_cookbook_endpoint():
     recipes = get_recipes_in_cookbook(cookbook_id)
 
     cookbook_name = get_cookbook_name(cookbook_id)
-    if recipes:
+    if recipes or len(recipes) == 0:
         return jsonify({"name": cookbook_name,"recipes": recipes}), 200
-    elif len(recipes) == 0:
-        return jsonify({"error": f"No Recipes found in cookbook {cookbook_name}"}), 200
     else:
         return jsonify({"error": "Error fetching recipes in cookbook"}), 500
 

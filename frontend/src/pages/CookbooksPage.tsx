@@ -4,6 +4,7 @@ import { BookOpen, Plus } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { CookbookType } from '../types/cookbook';
+import NewCookbookModal from '../components/NewCookbookModal';
 
 
 export const fetchCookbooks = async (
@@ -36,6 +37,7 @@ const CookbooksPage: React.FC = () => {
   const navigate = useNavigate();
   const [cookbooks, setCookbooks] = useState<CookbookType | null>(null);
   const [error, setError] = useState("");
+  const [showNewCookbookModal, setShowNewCookbookModal] = useState(false);
   
   useEffect(() => {
     fetchCookbooks(setCookbooks, setError);
@@ -56,7 +58,10 @@ const CookbooksPage: React.FC = () => {
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-serif text-papyrus-800">My Cookbooks</h1>
-            <button className="flex items-center gap-2 px-4 py-2 bg-papyrus-800 text-white rounded-lg hover:bg-papyrus-900 transition-colors font-serif">
+            <button 
+              onClick={() => setShowNewCookbookModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-papyrus-800 text-white rounded-lg hover:bg-papyrus-900 transition-colors font-serif"
+            >
               <Plus size={20} />
               New Cookbook
             </button>
@@ -78,6 +83,12 @@ const CookbooksPage: React.FC = () => {
                   <h2 className="text-xl font-serif text-papyrus-800">{cookbook.name}</h2>
                 </div>
               ))}
+              {showNewCookbookModal && (
+                <NewCookbookModal 
+                  isOpen={showNewCookbookModal} 
+                  onClose={() => setShowNewCookbookModal(false)} 
+                />
+              )}
           </div>
         </div>
       </main>
