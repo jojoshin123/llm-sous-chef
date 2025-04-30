@@ -28,6 +28,8 @@ def get_recipe(video_data, recipe_url):
                     "instructions": [],
                     "title": ""
                 }}
+                If the URL seems irrelevant or does not look like a recipe URL, or if the resulting recipe is completely empty,
+                please simply leave the \"ingredients\" and \"instructions\" values as empty lists.
                 """ + str(video_data),
             }
         ],

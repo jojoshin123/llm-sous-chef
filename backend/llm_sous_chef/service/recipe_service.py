@@ -19,7 +19,10 @@ def generate_recipe(url: str):
 
     # Send to LLM to construct recipe
     response = get_recipe(data, url)
-    return response
+    json_response = json.loads(response)
+    if not json_response["ingredients"] or not json_response["instructions"]:
+        return None
+    return json_response
 
 
 def check_for_url(text: str):

@@ -44,22 +44,28 @@ def login_endpoint():
 @require_auth
 def index():
     url = request.headers.get("url")
-    response = generate_recipe(url)
-    return json.loads(response)
+    json_response = generate_recipe(url)
+    if not json_response:
+        return jsonify({"error": "Not a valid recipe URL"}), 500
+    return json_response
 
 
 @main.route("/recipes/add-recipe", methods=["POST"])
 @require_auth
 def add_recipe_to_cookbook_endpoint():
     recipe = request.get_json()
+    print(recipe)
     url = recipe["url"]
-    cookbook_id = request.headers.get("cookbook-id")
+    cookbook_id_list = request.headers.get("cookbook-ids").split(',')
     user_id = request.user["user_id"]
-    recipe_id = add_recipe_to_cookbook(user_id, cookbook_id, recipe, url)
-    if recipe_id:
-        return jsonify({"recipe_id": recipe_id}), 200
+    result_list = []
+    for cookbook_id in cookbook_id_list:
+        recipe_id = add_recipe_to_cookbook(user_id, cookbook_id, recipe, url)
+        result_list.append(recipe_id)
+    if len(result_list) == len(cookbook_id_list):
+        return jsonify({"recipe_ids": result_list}), 200
     else:
-        return jsonify({"error": "Error creating recipe"}), 500
+        return jsonify({"error": "Error adding recipes to cookbooks"}), 500
 
 @main.route("/recipes/delete-recipe", methods=["POST"])
 @require_auth
