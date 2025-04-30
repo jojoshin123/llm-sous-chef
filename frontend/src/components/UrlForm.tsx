@@ -17,18 +17,15 @@ const UrlForm: React.FC<UrlFormProps> = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  const onSubmit = () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validations
     if (!isAuthenticated) {
       
       setAuthError('You must be logged in to submit a URL');
       return;
     }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Basic URL validation
     if (!url) {
       setError('Please enter a URL');
       return;
@@ -124,7 +121,7 @@ const UrlForm: React.FC<UrlFormProps> = () => {
         </p>
       </form>
       
-      <AlertModal errorMessage={authError} onClose={() => setAuthError('')} />
+      <AlertModal message={authError} titleText={"Error"} closeText={"Close"} onClose={() => setAuthError('')} />
     </>
   );
 };

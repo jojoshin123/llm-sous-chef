@@ -1,13 +1,16 @@
-import React, { useEffect } from 'react';
-import { useParams, Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import RecipeView from '../components/RecipeView';
+import SelectCookbookModal from '../components/SelectCookbookModal';
 
 const RecipeDetailPage: React.FC = () => {
+  const [showCookbookModal, setShowCookbookModal] = useState(false);
   const { cookbookId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Fetch recipe from navigate state
   const recipe = location.state;
@@ -18,7 +21,7 @@ const RecipeDetailPage: React.FC = () => {
       
       <main className="flex-grow px-4 py-8">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
+          <div className="mb-8 flex justify-between">
             <Link
               to={`/cookbooks/${cookbookId}`}
               className="inline-flex items-center text-papyrus-600 hover:text-papyrus-800 font-serif"
@@ -26,7 +29,21 @@ const RecipeDetailPage: React.FC = () => {
               <ChevronLeft size={20} />
               Back to Cookbook
             </Link>
+            <button
+              onClick={() => setShowCookbookModal(true)}
+              className="font-serif px-4 py-2 rounded-lg bg-papyrus-800 text-white hover:bg-papyrus-900 cursor-pointer transition-colors"
+            >
+              Add to cookbook  <b>+</b> 
+            </button>
+            {showCookbookModal && (
+                <SelectCookbookModal 
+                  isOpen={showCookbookModal} 
+                  onClose={() => setShowCookbookModal(false)}
+                  recipe={recipe}
+                />
+            )}
           </div>
+          
 
           <RecipeView recipe={recipe} />
         </div>

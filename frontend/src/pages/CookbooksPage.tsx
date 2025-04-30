@@ -1,14 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Plus } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { CookbookType } from '../types/cookbook';
 
-interface CookbookType {
-  id: number;
-  name: string;
-  recipe_count: number;
-}
+
+export const fetchCookbooks = async (
+  setCookbooks: Dispatch<SetStateAction<CookbookType[]>>, 
+  setError: Dispatch<SetStateAction<string>>
+) => {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await fetch('http://127.0.0.1:5000/recipes/get-cookbooks',{
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token,
+          },
+        });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }else if (response.status === 204) {
+      setCookbooks([]);
+      return;
+    }
+    const result = await response.json();
+    setCookbooks(result); // Save the data into state
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    setError(message);
+  }
+};
 
 const CookbooksPage: React.FC = () => {
   const navigate = useNavigate();
@@ -16,30 +38,7 @@ const CookbooksPage: React.FC = () => {
   const [error, setError] = useState("");
   
   useEffect(() => {
-    // Define an async function inside useEffect
-    const fetchData = async () => {
-        const token = localStorage.getItem('token');
-        try {
-          const response = await fetch('http://127.0.0.1:5000/recipes/get-cookbooks',{
-              method: 'GET',
-              headers: {
-                  'Authorization': 'Bearer ' + token,
-                },
-              });
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }else if (response.status === 204) {
-            setCookbooks([]);
-            return;
-          }
-          const result = await response.json();
-          setCookbooks(result); // Save the data into state
-        } catch (err) {
-          const message = err instanceof Error ? err.message : 'Unknown error';
-          setError(message);
-        }
-      };
-    fetchData();
+    fetchCookbooks(setCookbooks, setError);
   }, []);
 
   if (error) {
