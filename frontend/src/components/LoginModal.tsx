@@ -28,6 +28,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
       setError('Login failed. Please check your credentials and try again.');
     } finally {
       setIsLoading(false);
+      setIdentifier('');
+      setPassword('');
     }
   };
 

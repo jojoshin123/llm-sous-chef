@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Clock, Users, ChevronRight, Plus } from 'lucide-react';
+import { ChevronLeft, Clock, Users, ChevronRight, Plus, Forward } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import type { Recipe } from '../types/recipe';
+import UserSelectModal from '../components/UserSelectModal';
 
 const CookbookDetailPage: React.FC = () => {
   const { id } = useParams();
@@ -11,6 +12,7 @@ const CookbookDetailPage: React.FC = () => {
   const [cookbookName, setCookbookName] = useState<String>("");
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [error, setError] = useState("");
+  const [showShareModal, setShowShareModal] = useState(false);
   
   useEffect(() => {
       const fetchData = async () => {
@@ -61,15 +63,24 @@ const CookbookDetailPage: React.FC = () => {
               <ChevronLeft size={20} />
               Back to Cookbooks
             </Link>
-            <h1 className="text-3xl font-serif text-papyrus-800">{cookbookName}</h1>
-            <button 
-              onClick={() => navigate('/')}
-              className="flex items-center gap-2 px-4 py-2 bg-papyrus-800 text-white rounded-lg hover:bg-papyrus-900 transition-colors font-serif"
-            >
-              <Plus size={20} />
-              Add Recipe
-            </button>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2 px-4 py-2 bg-papyrus-800 text-white rounded-lg hover:bg-papyrus-900 transition-colors font-serif"
+              >
+                <Plus size={20} />
+                Add Recipe
+              </button>
+              <button 
+                onClick={() => setShowShareModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-papyrus-800 text-white rounded-lg hover:bg-papyrus-900 transition-colors font-serif"
+              >
+                <Forward size={20} />
+                Share
+              </button>
+            </div>
           </div>
+          <h1 className="text-3xl font-serif text-papyrus-800 text-center pb-4">{cookbookName}</h1>
 
           <div className="space-y-4">
             {
@@ -96,17 +107,23 @@ const CookbookDetailPage: React.FC = () => {
                   <div className="flex items-center gap-6 mt-4 text-papyrus-600">
                     <div className="flex items-center gap-2">
                       <Clock size={18} />
-                      {/* TODO: Add cook time into backend*/}
-                      <span className="font-serif">30 min</span>
+                      <span className="font-serif">{recipe.cook_time}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Users size={18} />
                       {/* TODO: Add servings into backend*/}
-                      <span className="font-serif">Serves 2</span>
+                      <span className="font-serif">Serves {recipe.servings}</span>
                     </div>
                   </div>
                 </div>
               ))}
+              {showShareModal && (
+                <UserSelectModal 
+                  onClose={() => setShowShareModal(false)}
+                  onCancel={() => setShowShareModal(false)}
+                  cookbookId={id!}
+                />
+              )}
           </div>
         </div>
       </main>

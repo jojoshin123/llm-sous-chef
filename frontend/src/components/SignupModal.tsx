@@ -57,6 +57,10 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
       setError('Sign up failed. Please change your username or email and try again.');
     } finally {
       setIsLoading(false);
+      setUsername('');
+      setEmail('');
+      setPassword('');
+      setPasswordConf('');
     }
   };
 

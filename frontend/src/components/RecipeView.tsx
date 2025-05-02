@@ -1,12 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Recipe } from '../types/recipe';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Trash } from 'lucide-react';
+import ConfirmationModal from './ConfirmationModal';
+import { useNavigate } from 'react-router-dom';
 
 interface RecipeViewProps {
   recipe: Recipe;
+  cookbookId: string | undefined;
 }
 
-const RecipeView: React.FC<RecipeViewProps> = ({ recipe }) => {
+const RecipeView: React.FC<RecipeViewProps> = ({ recipe, cookbookId }) => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      console.log(recipe);
+      const response = await fetch('http://127.0.0.1:5000/recipes/delete-recipe', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+          'cookbook-id': cookbookId.toString(),
+          'recipe-id': recipe.recipe.id,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete recipe');
+      }
+
+      navigate(`/cookbooks/${cookbookId}`);
+      
+    } catch (err) {
+      setError('Error while deleting recipe. Please try again.');
+    }
+  }
+
   return (
     <div className="flex gap-8">
       {/* Ingredients Sidebar */}
@@ -33,12 +65,12 @@ const RecipeView: React.FC<RecipeViewProps> = ({ recipe }) => {
           {recipe.recipe.title}
         </h1>
 
-        <p className="text-md font-serif py-4 text-papyrus-600 mb-4">
+        <p className="text-md font-serif pb-1 text-papyrus-600 mb-4">
           <a 
             href={recipe.recipe.url}
             target="_blank"
             rel="noopener noreferrer"
-            className='inline-flex items-center gap-2 hover:text-papyrus-200 transition-colors'>
+            className='inline-flex items-center gap-2 hover:text-papyrus-400 transition-colors'>
             {recipe.recipe.url} <ExternalLink size={16}/>
           </a>
         </p>
@@ -46,8 +78,6 @@ const RecipeView: React.FC<RecipeViewProps> = ({ recipe }) => {
         <p className="text-lg font-serif text-papyrus-600 mb-8">
           {recipe.recipe.description}
         </p>
-        
-        
 
         <div className="bg-white p-6 rounded-lg border border-papyrus-200 shadow-sm">
           <h2 className="text-xl font-serif text-papyrus-800 mb-4">Instructions</h2>
@@ -65,6 +95,32 @@ const RecipeView: React.FC<RecipeViewProps> = ({ recipe }) => {
             ))}
           </ol>
         </div>
+        { cookbookId &&
+          <div className="mt-8 flex justify-end">
+            <button
+                onClick={() => setShowDeleteModal(true)}
+                aria-label={`Delete ${recipe.name}`}
+                className="inline-flex items-center gap-2 font-serif px-4 py-2 rounded-lg bg-papyrus-800 text-white hover:bg-red-500 cursor-pointer transition-colors"
+              >
+                Delete Recipe<Trash size={18} />
+              </button>
+          </div>
+        }
+        {showDeleteModal && (
+          <ConfirmationModal
+            onClose={() => {
+              setShowDeleteModal(false);
+              handleDelete();
+            }}
+            onCancel={() => {
+              setShowDeleteModal(false);
+            }}
+            titleText="Confirm Deletion"
+            message={"Are you sure you want to delete?"}
+            closeText="Confirm"
+          />
+        )}
+        {error && <p className="text-red-500 mb-2">{error}</p>}
       </div>
     </div>
   );

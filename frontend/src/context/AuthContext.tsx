@@ -30,6 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUserName(decodedToken.username);
         }        
       }
+
     } catch (error) {
       console.error('JWT Token expired', error);
       setIsAuthenticated(false);

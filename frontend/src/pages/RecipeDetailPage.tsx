@@ -46,8 +46,8 @@ const RecipeDetailPage: React.FC = () => {
           </div>
           
 
-          <RecipeView recipe={recipe} />
-        </div>
+          <RecipeView recipe={recipe} cookbookId={cookbookId}/>
+        </div> 
       </main>
       
       <Footer />

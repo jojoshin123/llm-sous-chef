@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function UserMenu({ userName }: { userName: string }) {
+    const { logout } = useAuth();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -38,7 +40,8 @@ function UserMenu({ userName }: { userName: string }) {
                 <button className="w-full text-left px-4 py-2 hover:bg-papyrus-100 text-sm">
                 Profile
                 </button>
-                <button className="w-full text-left px-4 py-2 hover:bg-papyrus-100 text-sm text-red-500">
+                <button className="w-full text-left px-4 py-2 hover:bg-papyrus-100 text-sm text-red-500"
+                onClick={() => {logout(); navigate('/');}}>
                 Log out
                 </button>
             </div>
