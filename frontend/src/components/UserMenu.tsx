@@ -37,9 +37,10 @@ function UserMenu({ userName }: { userName: string }) {
                 onClick={() => {navigate('/cookbooks'); setIsOpen(false);}}>
                 Cookbooks
                 </button>
-                <button className="w-full text-left px-4 py-2 hover:bg-papyrus-100 text-sm">
+                {/* TODO: Implement password change? */}
+                {/* <button className="w-full text-left px-4 py-2 hover:bg-papyrus-100 text-sm">
                 Profile
-                </button>
+                </button> */}
                 <button className="w-full text-left px-4 py-2 hover:bg-papyrus-100 text-sm text-red-500"
                 onClick={() => {logout(); navigate('/');}}>
                 Log out
