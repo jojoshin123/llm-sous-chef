@@ -74,6 +74,7 @@ def delete_user_recipe_endpoint():
     cookbook_id = request.headers.get("cookbook-id")
     recipe_id = request.headers.get("recipe-id")
     rows_deleted = delete_recipe_from_cookbook(cookbook_id, recipe_id)
+    print(rows_deleted)
     if rows_deleted:
         return jsonify({"message": "Successfully deleted recipe"}), 200
     elif rows_deleted == 0:
@@ -125,10 +126,7 @@ def add_user_cookbook_endpoint():
 @check_cookbook_access
 def share_cookbook_endpoint():
     # Get username or email
-    new_user = request.headers.get("new-user-username") \
-        if request.headers.get("new-user-username") \
-        else request.headers.get("new-user-email")
-
+    new_user = request.headers.get("new-user")
     cookbook_id = request.headers.get("cookbook-id")
 
     cookbook_map_id = share_cookbook(cookbook_id, new_user)

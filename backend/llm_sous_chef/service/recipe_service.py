@@ -147,6 +147,7 @@ def get_recipes_in_cookbook(cookbook_id: str) -> list[dict]:
 
 def delete_recipe_from_cookbook(cookbook_id: str, recipe_id: str) -> int:
     with conn.cursor() as cur:
+        print(f"{recipe_id} {cookbook_id}")
         try:
             cur.execute("""
                             DELETE FROM recipes

@@ -27,7 +27,9 @@ def get_recipe(video_data, recipe_url):
                             If quantity is not mentioned in the video metadata, then please generate your own quantities
                             based on similar recipes.)
                     "instructions": [],
-                    "title": ""
+                    "title": "",
+                    "cook_time": "", (Use "hr" and "min" abbreviations for hours and minutes)
+                    "servings": "",
                 }}
                 If the URL seems irrelevant or does not look like a recipe URL, or if the resulting recipe is completely empty,
                 please simply leave the \"ingredients\" and \"instructions\" values as empty lists.
