@@ -41,7 +41,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (identifier: string, password: string) => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/login', {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,9 +58,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await response.json();
       const token = data['token']
 
-      localStorage.setItem('token', token); //TODO: is persistent session actually working?
+      localStorage.setItem('token', token);
       setIsAuthenticated(true);
-      console.log(data.username);
       setUserName(data.username);
     } catch (error) {
       console.error('Login error:', error);

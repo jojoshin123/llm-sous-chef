@@ -33,8 +33,8 @@ const SelectCookbookModal: React.FC<SelectCookbookModalProps> = ({ isOpen, onClo
     
     try {
       const token = localStorage.getItem('token');
-      console.log(JSON.stringify(recipe));
-      const response = await fetch('http://127.0.0.1:5000/recipes/add-recipe', {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${API_URL}/recipes/add-recipe`, {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + token,

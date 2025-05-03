@@ -19,7 +19,8 @@ const NewCookbookModal: React.FC<NewCookbookModalProps> = ({ isOpen, onClose }) 
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://127.0.0.1:5000/recipes/create-cookbook', {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${API_URL}/recipes/create-cookbook`, {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + token,

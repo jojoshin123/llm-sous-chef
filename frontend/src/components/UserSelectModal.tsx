@@ -16,7 +16,8 @@ const UserSelectModal: React.FC<UserSelectModalProps> = ({ onClose, onCancel, co
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://127.0.0.1:5000/recipes/share-cookbook', {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${API_URL}/recipes/share-cookbook`, {
         method: 'POST',
         headers: {
           "Authorization": 'Bearer ' + token,

@@ -39,7 +39,8 @@ const UrlForm: React.FC<UrlFormProps> = () => {
       
       console.log("Processing recipe URL:", url);      
 
-      const response = await fetch('http://127.0.0.1:5000/recipes/process', {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${API_URL}/recipes/process`, {
         method: 'GET',
         headers: {
           'Authorization': 'Bearer ' + token,

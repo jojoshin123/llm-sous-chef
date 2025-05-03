@@ -18,7 +18,8 @@ const CookbookDetailPage: React.FC = () => {
       const fetchData = async () => {
           const token = localStorage.getItem('token');
           try {
-            const response = await fetch('http://127.0.0.1:5000/recipes/get-recipes',{
+            const API_URL = import.meta.env.VITE_API_URL;
+            const response = await fetch(`${API_URL}/recipes/get-recipes`,{
                 method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + token,

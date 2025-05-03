@@ -6,14 +6,14 @@ import Footer from '../components/Footer';
 import { CookbookType } from '../types/cookbook';
 import NewCookbookModal from '../components/NewCookbookModal';
 
-
 export const fetchCookbooks = async (
   setCookbooks: Dispatch<SetStateAction<CookbookType[]>>, 
   setError: Dispatch<SetStateAction<string>>
 ) => {
   const token = localStorage.getItem('token');
   try {
-    const response = await fetch('http://127.0.0.1:5000/recipes/get-cookbooks',{
+    const API_URL = import.meta.env.VITE_API_URL;
+    const response = await fetch(`${API_URL}/recipes/get-cookbooks`,{
         method: 'GET',
         headers: {
             'Authorization': 'Bearer ' + token,

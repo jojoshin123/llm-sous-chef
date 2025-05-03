@@ -17,7 +17,8 @@ const RecipeView: React.FC<RecipeViewProps> = ({ recipe, cookbookId }) => {
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://127.0.0.1:5000/recipes/delete-recipe', {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${API_URL}/recipes/delete-recipe`, {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + token,
