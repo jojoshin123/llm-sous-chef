@@ -6,6 +6,14 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS cookbooks (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE (name, user_id)
+);
+
 CREATE TABLE IF NOT EXISTS recipes (
     id SERIAL PRIMARY KEY,
     url TEXT NOT NULL,
@@ -13,14 +21,6 @@ CREATE TABLE IF NOT EXISTS recipes (
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     cookbook_id INTEGER REFERENCES cookbooks(id) ON DELETE SET NULL,
     UNIQUE (url, cookbook_id)
-);
-
-CREATE TABLE IF NOT EXISTS cookbooks (
-    id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    user_id TEXT NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE (name, user_id)
 );
 
 CREATE TABLE IF NOT EXISTS cookbook_user_map (
