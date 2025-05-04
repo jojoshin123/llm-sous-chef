@@ -29,4 +29,5 @@ CREATE TABLE IF NOT EXISTS cookbook_user_map (
     cookbook_id INTEGER NOT NULL REFERENCES cookbooks(id)
 );
 
+--CREATE USER <username> WITH PASSWORD '<username>';
 --GRANT USAGE, SELECT ON SEQUENCE cookbooks_id_seq, users_id_seq, recipes_id_seq TO <username>;

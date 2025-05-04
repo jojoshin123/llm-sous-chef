@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { ChevronLeft, Plus } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -10,7 +10,6 @@ const RecipeDetailPage: React.FC = () => {
   const [showCookbookModal, setShowCookbookModal] = useState(false);
   const { cookbookId } = useParams();
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Fetch recipe from navigate state
   const recipe = location.state;

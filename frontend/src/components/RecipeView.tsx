@@ -40,6 +40,26 @@ const RecipeView: React.FC<RecipeViewProps> = ({ recipe, cookbookId }) => {
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 py-6">
+      <div className="w-full">
+          <h1 className="text-4xl font-serif text-papyrus-800 mb-2">
+            {recipe.recipe.title}
+          </h1>
+
+          <p className="text-md font-serif pb-1 text-papyrus-600 mb-4 break-all">
+            <a
+              href={recipe.recipe.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 hover:text-papyrus-400 transition-colors"
+            >
+              {recipe.recipe.url} <ExternalLink size={16} />
+            </a>
+          </p>
+
+          <p className="text-lg font-serif text-papyrus-600 mb-8">
+            {recipe.recipe.description}
+          </p>
+      </div>
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Ingredients Sidebar */}
         <div className="w-full lg:w-80 shrink-0">
@@ -61,7 +81,7 @@ const RecipeView: React.FC<RecipeViewProps> = ({ recipe, cookbookId }) => {
 
         {/* Main Content */}
         <div className="w-full">
-          <h1 className="text-3xl font-serif text-papyrus-800 mb-2">
+          {/* <h1 className="text-3xl font-serif text-papyrus-800 mb-2">
             {recipe.recipe.title}
           </h1>
 
@@ -78,7 +98,7 @@ const RecipeView: React.FC<RecipeViewProps> = ({ recipe, cookbookId }) => {
 
           <p className="text-lg font-serif text-papyrus-600 mb-8">
             {recipe.recipe.description}
-          </p>
+          </p> */}
 
           <div className="bg-white p-6 rounded-lg border border-papyrus-200 shadow-sm">
             <h2 className="text-xl font-serif text-papyrus-800 mb-4">Instructions</h2>
