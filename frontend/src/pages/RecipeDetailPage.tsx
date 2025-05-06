@@ -26,11 +26,12 @@ const RecipeDetailPage: React.FC = () => {
               className="inline-flex items-center text-papyrus-600 hover:text-papyrus-800 font-serif"
             >
               <ChevronLeft size={20} />
-              Back to Cookbook
+              <span className="block md:hidden">Back</span>
+              <span className="hidden md:block">Back to Cookbook</span>
             </Link>
             <button
               onClick={() => setShowCookbookModal(true)}
-              className="flex items-center gap-2 font-serif px-4 py-2 rounded-lg bg-papyrus-800 text-white hover:bg-papyrus-900 cursor-pointer transition-colors"
+              className="whitespace-nowrap flex items-center gap-2 font-serif px-4 py-2 rounded-lg bg-papyrus-800 text-white hover:bg-papyrus-900 cursor-pointer transition-colors"
             >
               <Plus size={20} />
               Add to cookbook

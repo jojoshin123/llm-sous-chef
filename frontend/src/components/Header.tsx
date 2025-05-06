@@ -44,7 +44,7 @@ const Header: React.FC = () => {
             </button>
             <button
               onClick={() => setIsSignupModalOpen(true)}
-              className="font-serif px-4 py-2 rounded-lg bg-papyrus-800 text-white hover:bg-papyrus-900 cursor-pointer transition-colors"
+              className="whitespace-nowrap font-serif px-4 py-2 rounded-lg bg-papyrus-800 text-white hover:bg-papyrus-900 cursor-pointer transition-colors"
             >
               Sign Up
             </button>

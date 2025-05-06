@@ -62,12 +62,13 @@ const CookbookDetailPage: React.FC = () => {
               className="inline-flex items-center text-papyrus-600 hover:text-papyrus-800 font-serif"
             >
               <ChevronLeft size={20} />
-              Back to Cookbooks
+              <span className="block md:hidden">Back</span>
+              <span className="hidden md:block">Back to Cookbooks</span>
             </Link>
             <div className="flex gap-2">
               <button 
                 onClick={() => navigate('/')}
-                className="flex items-center gap-2 px-4 py-2 bg-papyrus-800 text-white rounded-lg hover:bg-papyrus-900 transition-colors font-serif"
+                className="whitespace-nowrap flex items-center gap-2 px-4 py-2 bg-papyrus-800 text-white rounded-lg hover:bg-papyrus-900 transition-colors font-serif"
               >
                 <Plus size={20} />
                 Add Recipe

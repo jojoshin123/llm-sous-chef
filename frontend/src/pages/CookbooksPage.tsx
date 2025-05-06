@@ -60,7 +60,7 @@ const CookbooksPage: React.FC = () => {
             <h1 className="text-3xl font-serif text-papyrus-800">My Cookbooks</h1>
             <button 
               onClick={() => setShowNewCookbookModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-papyrus-800 text-white rounded-lg hover:bg-papyrus-900 transition-colors font-serif"
+              className="whitespace-nowrap flex items-center gap-2 px-4 py-2 bg-papyrus-800 text-white rounded-lg hover:bg-papyrus-900 transition-colors font-serif"
             >
               <Plus size={20} />
               New Cookbook
