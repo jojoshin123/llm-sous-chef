@@ -5,12 +5,14 @@ import SignupModal from './SignupModal';
 import { useAuth } from '../context/AuthContext';
 import UserMenu from './UserMenu';
 import { useNavigate } from 'react-router-dom';
+import Logo from '/chef-icon.svg';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
   const { isAuthenticated, userName, loading } = useAuth();
+
   
   if (loading) {
     return <></>;
@@ -20,11 +22,7 @@ const Header: React.FC = () => {
     <header className="py-6 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto flex justify-between items-center">
         <div className="flex items-center gap-3 py-2 rounded-lg hover:scale-105 cursor-pointer transition-all">
-          <BookOpen 
-            size={32} 
-            className="text-papyrus-800" 
-            strokeWidth={1.5} 
-          />
+          <img src={Logo} alt="Site Logo" className="h-10 w-auto" />
           <h1 className="text-2xl sm:text-3xl font-serif text-papyrus-800">
             <button onClick={() => navigate('/')}>
               LLM<span className="text-papyrus-600">Sous Chef</span>
