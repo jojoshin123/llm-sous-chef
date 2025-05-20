@@ -4,7 +4,7 @@ My friends and I find most of our home cooking recipes on short-form video socia
 [**LLM Sous Chef**](https://llmsouschef.jonzh.org/) will take in a URL to a cooking social media video post (or any recipe URL!) and convert it to a coherent recipe, which you can easily save to a collection of cookbooks under your account.
 
 
-![image](https://github.com/user-attachments/assets/4f4a1587-df85-4d80-abf6-bf0ddbc4ce30)
+![image](https://github.com/jojoshin123/llm-sous-chef/blob/develop/recording.gif)
 
 
 All it does is aggregate the video data -- the transcript, title, description, and any recipe URLs in the description -- and send it off for LLM inference via Groqcloud to output a recipe.
